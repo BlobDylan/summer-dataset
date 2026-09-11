@@ -1,0 +1,1460 @@
+<title>SUMMER Dataset Atlas</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans+Condensed:wght@500;600;700&family=IBM+Plex+Sans:ital,wght@0,400;0,500;0,600;1,400&display=swap">
+<style>
+:root {
+  color-scheme: light;
+  --bg: #eef0ec;
+  --surface: #fbfcfa;
+  --ink: #131714;
+  --ink2: #4a524c;
+  --muted: #7c847e;
+  --grid: #e2e5df;
+  --axis: #c0c6bf;
+  --border: rgba(19, 23, 20, .10);
+  --accent: #0d676d;
+  --accent-soft: #a8cdcf;
+  --zero: #f1f3ef;
+  --shade: rgba(238, 240, 236, .78);
+  --g0: #2a78d6; --g1: #eb6834; --g2: #1baf7a; --g3: #4a3aa7; --g4: #979c96;
+  --su: #0d676d; --mu: #9cc6c8; --int: #e34948;
+  --div-neg: #2a78d6; --div-mid: #f0efec; --div-pos: #e34948;
+  --seq-lo: #e8f0fa; --seq-hi: #104281;
+  --sans: "IBM Plex Sans", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --cond: "IBM Plex Sans Condensed", "IBM Plex Sans", system-ui, sans-serif;
+  --mono: "IBM Plex Mono", ui-monospace, "SF Mono", Menlo, monospace;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    color-scheme: dark;
+    --bg: #0b0d0c; --surface: #151817; --ink: #eef1ee; --ink2: #b7beb9; --muted: #838a85;
+    --grid: #252927; --axis: #3a403c; --border: rgba(255, 255, 255, .09);
+    --accent: #52b6bc; --accent-soft: #2b5557; --zero: #1b1f1d; --shade: rgba(21, 24, 23, .78);
+    --g0: #3987e5; --g1: #d95926; --g2: #199e70; --g3: #b06ee0; --g4: #7b807a;
+    --su: #52b6bc; --mu: #3d7a7e; --int: #e66767;
+    --div-neg: #3987e5; --div-mid: #2e302e; --div-pos: #e66767;
+    --seq-lo: #1a2330; --seq-hi: #86b6ef;
+  }
+}
+:root[data-theme="dark"] {
+  color-scheme: dark;
+  --bg: #0b0d0c; --surface: #151817; --ink: #eef1ee; --ink2: #b7beb9; --muted: #838a85;
+  --grid: #252927; --axis: #3a403c; --border: rgba(255, 255, 255, .09);
+  --accent: #52b6bc; --accent-soft: #2b5557; --zero: #1b1f1d; --shade: rgba(21, 24, 23, .78);
+  --g0: #3987e5; --g1: #d95926; --g2: #199e70; --g3: #b06ee0; --g4: #7b807a;
+  --su: #52b6bc; --mu: #3d7a7e; --int: #e66767;
+  --div-neg: #3987e5; --div-mid: #2e302e; --div-pos: #e66767;
+  --seq-lo: #1a2330; --seq-hi: #86b6ef;
+}
+.keybar { display: inline-block; width: 110px; height: 9px; border-radius: 2px; background: linear-gradient(90deg, var(--div-neg), var(--div-mid), var(--div-pos)); }
+.key { display: inline-flex; align-items: center; gap: 6px; font: 11px var(--mono); color: var(--muted); }
+
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; scroll-padding-top: 64px; }
+@media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } }
+body {
+  margin: 0; background: var(--bg); color: var(--ink);
+  font: 15px/1.6 var(--sans); -webkit-font-smoothing: antialiased;
+}
+.page { max-width: 1240px; margin: 0 auto; padding-inline: 24px; padding-block: 0 80px; }
+@media (max-width: 600px) { .page { padding-inline: 16px; } }
+
+a { color: var(--accent); }
+h1, h2, h3 { font-family: var(--cond); text-wrap: balance; margin: 0; }
+p { margin: 0; }
+b, strong { font-weight: 600; }
+code { font: 13px var(--mono); background: var(--zero); padding: 1px 5px; border-radius: 4px; }
+
+/* Header */
+.hero { padding-block: 56px 28px; display: grid; gap: 18px; }
+.eyebrow { font: 500 12px/1.4 var(--mono); letter-spacing: .08em; text-transform: uppercase; color: var(--muted); }
+.hero h1 { font-size: clamp(38px, 6vw, 64px); font-weight: 700; line-height: 1.0; letter-spacing: -.01em; }
+.hero h1 span { color: var(--accent); }
+.lede { font-size: 18px; max-width: 68ch; color: var(--ink2); }
+.stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 1px; background: var(--border);
+  border: 1px solid var(--border); border-radius: 10px; overflow: hidden; margin-top: 10px; }
+.stat { background: var(--surface); padding: 14px 16px; display: grid; gap: 2px; }
+.stat .v { font: 600 28px/1.1 var(--cond); }
+.stat .l { font-size: 13px; color: var(--ink2); }
+.stat .s { font: 12px var(--mono); color: var(--muted); }
+
+/* Nav */
+.toc { position: sticky; top: 0; z-index: 20; background: color-mix(in srgb, var(--bg) 92%, transparent);
+  backdrop-filter: blur(8px); border-bottom: 1px solid var(--border); margin-inline: -24px; padding-inline: 24px; }
+@media (max-width: 600px) { .toc { margin-inline: -16px; padding-inline: 16px; } }
+.toc ol { list-style: none; margin: 0; padding: 10px 0; display: flex; gap: 4px; overflow-x: auto; scrollbar-width: none; }
+.toc a { display: block; white-space: nowrap; text-decoration: none; color: var(--ink2); font-size: 13px; padding: 5px 10px; border-radius: 6px; }
+.toc a:hover, .toc a:focus-visible { background: var(--surface); color: var(--ink); }
+.toc a .n { font-family: var(--mono); color: var(--muted); margin-right: 6px; font-size: 11px; }
+
+/* Sections */
+section { padding-top: 56px; display: grid; gap: 20px; }
+.sec-head { display: grid; gap: 8px; max-width: 76ch; }
+.sec-head .eyebrow { color: var(--accent); }
+.sec-head h2 { font-size: clamp(26px, 3.4vw, 34px); font-weight: 600; line-height: 1.15; }
+.sec-head p { color: var(--ink2); }
+.grid2 { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 520px), 1fr)); gap: 20px; align-items: start; }
+
+.fig { margin: 0; background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 20px 22px 18px;
+  display: grid; gap: 12px; min-width: 0; align-content: start; }
+@media (max-width: 600px) { .fig { padding: 16px 14px; } }
+.fig h3 { font-size: 19px; font-weight: 600; line-height: 1.25; }
+.fig .how { font-size: 13.5px; color: var(--ink2); max-width: 80ch; }
+.fig .how b { color: var(--ink); font-weight: 500; }
+.fig .take { font-size: 14px; border-top: 1px solid var(--grid); padding-top: 10px; max-width: 90ch; }
+.fig .take::before { content: "Takeaway"; font: 500 11px var(--mono); letter-spacing: .08em; text-transform: uppercase; color: var(--accent); margin-right: 10px; }
+.fig .note { font-size: 12.5px; color: var(--muted); max-width: 90ch; }
+.plot { position: relative; min-width: 0; }
+.scroll-x { overflow-x: auto; }
+
+.legend { display: flex; flex-wrap: wrap; gap: 4px 14px; font-size: 13px; color: var(--ink2); }
+.legend .item { display: inline-flex; align-items: center; gap: 6px; background: none; border: 0; padding: 2px 4px; margin: 0 -4px;
+  font: inherit; color: inherit; cursor: default; border-radius: 4px; }
+.legend button.item { cursor: pointer; }
+.legend button.item:hover { background: var(--zero); }
+.legend .item.off { opacity: .35; }
+.sw { width: 12px; height: 12px; border-radius: 3px; flex: none; }
+.sw.line { height: 3px; border-radius: 2px; width: 16px; }
+.legend svg { flex: none; }
+
+.controls { display: flex; flex-wrap: wrap; gap: 10px 18px; align-items: center; font-size: 13px; color: var(--ink2); }
+select { font: 13px var(--sans); color: var(--ink); background: var(--bg); border: 1px solid var(--axis); border-radius: 6px; padding: 4px 8px; }
+select:focus-visible, button:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+/* Chart chrome */
+.ax path, .ax line { stroke: var(--axis); }
+.ax text { fill: var(--muted); font: 11px var(--mono); }
+.grid line { stroke: var(--grid); }
+.axlabel { fill: var(--ink2); font: 12px var(--sans); }
+.ptitle { fill: var(--ink); font: 600 13px var(--sans); }
+.psub { fill: var(--muted); font: 11px var(--mono); }
+.vlabel { fill: var(--ink2); font: 11px var(--mono); }
+.rule { stroke: var(--ink2); stroke-width: 1; }
+.rule-accent { stroke: var(--accent); stroke-width: 1.5; }
+
+.multiples { display: grid; gap: 14px 12px; }
+.mini { display: grid; gap: 2px; }
+.mini .hd { display: flex; justify-content: space-between; font-size: 12px; gap: 6px; }
+.mini .hd b { font-family: var(--cond); font-size: 13px; }
+.mini .hd span, .mini .ft { font: 11px var(--mono); color: var(--muted); }
+
+/* Table */
+.table-wrap { overflow-x: auto; }
+table { border-collapse: collapse; width: 100%; font-size: 13px; }
+th, td { padding: 6px 10px; text-align: left; border-bottom: 1px solid var(--grid); white-space: nowrap; }
+th { font: 500 11px var(--mono); letter-spacing: .04em; text-transform: uppercase; color: var(--muted); position: sticky; top: 0; background: var(--surface); }
+th button { all: unset; cursor: pointer; }
+th button:hover { color: var(--ink); }
+td.num { font-family: var(--mono); font-variant-numeric: tabular-nums; text-align: right; }
+th.num { text-align: right; }
+.ibar { display: inline-block; height: 8px; border-radius: 0 3px 3px 0; background: var(--accent); vertical-align: middle; margin-left: 8px; }
+.pill { font: 11px var(--mono); padding: 1px 6px; border-radius: 10px; background: var(--zero); color: var(--ink2); margin-right: 3px; }
+table.matrix td { text-align: center; font-family: var(--mono); font-size: 12.5px; border: 2px solid var(--surface); border-radius: 4px; }
+table.matrix td small { display: block; font-size: 10.5px; opacity: .8; }
+table.matrix th { position: static; text-align: center; white-space: normal; min-width: 76px; vertical-align: bottom; }
+table.matrix th:first-child, table.matrix td:first-child { text-align: left; font-family: var(--sans); border: 0; background: none; }
+
+/* NWB tree */
+.tree { font: 13px/1.55 var(--mono); display: grid; gap: 2px; }
+.tree .row { display: grid; grid-template-columns: minmax(220px, 330px) 1fr; gap: 16px; padding: 5px 0; border-bottom: 1px solid var(--grid); }
+.tree .path { color: var(--ink); }
+.tree .path i { font-style: normal; color: var(--muted); }
+.tree .desc { font-family: var(--sans); color: var(--ink2); font-size: 13.5px; }
+.tree .grp { font: 600 12px var(--mono); color: var(--accent); padding-top: 12px; letter-spacing: .04em; }
+@media (max-width: 700px) { .tree .row { grid-template-columns: 1fr; gap: 0; } }
+.gotchas { display: grid; gap: 10px; counter-reset: g; }
+.gotcha { display: grid; grid-template-columns: 26px 1fr; gap: 8px; font-size: 14px; }
+.gotcha::before { counter-increment: g; content: counter(g); font: 600 12px/22px var(--mono); text-align: center; width: 22px; height: 22px; border-radius: 50%; background: var(--zero); color: var(--accent); }
+
+#tip { position: fixed; z-index: 100; pointer-events: none; background: var(--surface); color: var(--ink);
+  border: 1px solid var(--border); box-shadow: 0 6px 24px rgba(0,0,0,.14); border-radius: 8px; padding: 8px 10px;
+  font-size: 12.5px; line-height: 1.45; max-width: 320px; }
+#tip .t { font-weight: 600; margin-bottom: 2px; }
+#tip .m { font-family: var(--mono); font-size: 11.5px; color: var(--ink2); }
+#tip .r { display: flex; align-items: center; gap: 6px; }
+#tip .r .sw { width: 9px; height: 9px; }
+#tip .r span:last-child { margin-left: auto; font-family: var(--mono); padding-left: 12px; }
+
+footer { margin-top: 64px; padding-top: 20px; border-top: 1px solid var(--border); color: var(--muted); font-size: 13px; display: grid; gap: 8px; max-width: 90ch; }
+</style>
+
+<div class="page">
+  <header class="hero">
+    <div class="eyebrow">DANDI 001616 · Scientific Data 13:1105 (2026) · Darcher, Gerken et al.</div>
+    <h1>SUMMER <span>Dataset Atlas</span></h1>
+    <p class="lede">Twenty-nine epilepsy patients with microwires in the medial temporal lobe watched <i>500 Days of Summer</i> from start to finish. We have the spike times of every neuron recorded during the movie, plus frame-by-frame labels for what was on screen. This page shows what that data looks like, from the patients to the spikes.</p>
+    <div class="stats" id="stats"></div>
+  </header>
+
+  <nav class="toc" aria-label="Sections">
+    <ol>
+      <li><a href="#files"><span class="n">1</span>What's in a file</a></li>
+      <li><a href="#patients"><span class="n">2</span>Patients &amp; sessions</a></li>
+      <li><a href="#electrodes"><span class="n">3</span>Electrodes &amp; regions</a></li>
+      <li><a href="#neurons"><span class="n">4</span>Neurons</a></li>
+      <li><a href="#movie"><span class="n">5</span>The movie labels</a></li>
+      <li><a href="#activity"><span class="n">6</span>Activity over the movie</a></li>
+      <li><a href="#responses"><span class="n">7</span>Responses to events</a></li>
+      <li><a href="#ml"><span class="n">8</span>For machine learning</a></li>
+    </ol>
+  </nav>
+
+  <!-- 1 -->
+  <section id="files">
+    <div class="sec-head">
+      <div class="eyebrow">1 · Data structure</div>
+      <h2>One NWB file per patient, and what's inside</h2>
+      <p>Each <code>sub-N_ses-subN_ecephys.nwb</code> file (~80 MB) holds everything for one viewing session. Most of the size is the movie labels, which are copied into all 29 files. The shapes below are from <code>sub-1</code>.</p>
+    </div>
+    <div class="grid2">
+      <figure class="fig">
+        <figcaption><h3>The containers you'll actually use</h3></figcaption>
+        <div class="tree">
+          <div class="grp">/units — one row per neuron</div>
+          <div class="row"><div class="path">spike_times <i>ragged · 397,655</i></div><div class="desc">Spike times in <b>milliseconds on the recording clock</b>. <code>spike_times_index</code> marks where each neuron's spikes end.</div></div>
+          <div class="row"><div class="path">waveform_mean / _sem <i>(40, 64)</i></div><div class="desc">Mean spike shape: 64 samples at 32,768 Hz (~2 ms), with the peak at sample 19.</div></div>
+          <div class="row"><div class="path">brain_region, hemisphere, csc_nr</div><div class="desc">Where the neuron was recorded, and which wire (links to /electrodes).</div></div>
+          <div class="row"><div class="path">is_single_unit, cell_type</div><div class="desc">Single unit (SU) vs multi-unit (MU). SUs are labeled pyramidal, interneuron or negative-peak.</div></div>
+          <div class="row"><div class="path">peak_SNR, isi_violations, cv2, iso_dist</div><div class="desc">Spike-sorting quality metrics (see section 4).</div></div>
+          <div class="grp">/general/extracellular_ephys/electrodes — one row per wire with ≥1 neuron</div>
+          <div class="row"><div class="path">x, y, z, brain_region, group_name</div><div class="desc">MNI coordinates (mm) averaged over the bundle, so all 8 wires in a bundle share one position.</div></div>
+          <div class="grp">/stimulus/presentation</div>
+          <div class="row"><div class="path">cleaned_watchlogs <i>(120,102)</i></div><div class="desc">For each displayed frame: <code>pts</code> (movie time, s) ↔ <code>neural_recording_time</code> (ms). Use this to put spikes on the movie timeline.</div></div>
+          <div class="row"><div class="path">raw_watchlogs <i>(121,266)</i></div><div class="desc">The same log before pauses and seeks were cleaned out.</div></div>
+          <div class="row"><div class="path">annotations_base <i>(12,387 intervals)</i></div><div class="desc">Labels as intervals: <code>label_name</code>, <code>start_time</code>, <code>stop_time</code> (movie s), and <code>value</code> (1 = present).</div></div>
+          <div class="row"><div class="path">movie_frame_times_base / _analysis</div><div class="desc">125,743 frame onsets (0–5,029.68 s), plus the 118,162 frames from 36.72 to 4,763.2 s that the authors analyze (credits excluded).</div></div>
+          <div class="grp">/processing/machine_learning</div>
+          <div class="row"><div class="path">movie_annotations_indicator_functions <i>53 × 125,743</i></div><div class="desc">The same labels, one value per frame. This is the easiest form to use for decoding.</div></div>
+          <div class="row"><div class="path">movie_binning_info</div><div class="desc">Frame-aligned bin edges for 40, 80, 200, 480 and 1000 ms bins.</div></div>
+        </div>
+      </figure>
+      <figure class="fig">
+        <figcaption><h3>Gotchas found while reading the files</h3>
+          <p class="how">These all affect how you load the data. Every chart on this page already accounts for them.</p></figcaption>
+        <div class="gotchas">
+          <div class="gotcha"><div><b>Spikes are on the recording clock, not the movie clock.</b> That clock keeps running during pauses, so a session can be much longer than the movie. To get movie time, interpolate each spike through <code>cleaned_watchlogs</code>. Spikes that fall inside a pause (&gt;1 s between displayed frames) are dropped here.</div></div>
+          <div class="gotcha"><div><b>Some spikes fall outside the movie.</b> Some sessions include recording from before the movie started (e.g. sub-8 starts 19 min early) or after it ended. Spike counts in the files are therefore larger than the counts during the movie.</div></div>
+          <div class="gotcha"><div><b>Waveforms are in µV,</b> even though the <code>unit</code> attribute says "volts" (peak amplitudes are around 50–400).</div></div>
+          <div class="gotcha"><div><b>Electrode coordinates are standard MNI,</b> even though the column descriptions say "+x is posterior, +y is inferior". The values follow the usual convention (x = right, y = anterior, z = up): left-amygdala bundles sit at x ≈ −18.</div></div>
+          <div class="gotcha"><div><b><code>indoor-setting</code> has three values:</b> 1 = indoor, 0 = outdoor, 99 = neither (title cards, credits). Every other label is 0/1.</div></div>
+          <div class="gotcha"><div><b>Camera and scene cuts last a single frame.</b> The value 1 marks only the first frame of each new shot. That's why they cover under 1% of frames but have 958 and 133 events.</div></div>
+          <div class="gotcha"><div><b>Small differences from the paper's counts:</b> the files have 1,087 pyramidal cells and 12 negative-peak units, while the paper text says 1,086 and 13.</div></div>
+        </div>
+      </figure>
+    </div>
+  </section>
+
+  <!-- 2 -->
+  <section id="patients">
+    <div class="sec-head">
+      <div class="eyebrow">2 · Who was recorded</div>
+      <h2>Patients &amp; viewing sessions</h2>
+      <p>The patients were being monitored in hospital for epilepsy surgery. Electrodes were placed only where doctors needed them, so each patient covers a different set of regions and yields a different number of neurons.</p>
+    </div>
+    <figure class="fig">
+      <figcaption><h3>How many neurons each patient contributes, by region</h3>
+        <p class="how"><b>How to read:</b> each column is one patient (numbered as in the paper), and its height is the number of neurons recorded. Colors show which brain region the neurons came from. Hover a column for age, sex and the single/multi-unit split.</p></figcaption>
+      <div class="legend" data-legend="groups"></div>
+      <div class="plot" data-render="patients"></div>
+      <p class="take" id="take-patients"></p>
+    </figure>
+    <figure class="fig">
+      <figcaption><h3>How each patient actually watched the movie</h3>
+        <p class="how"><b>How to read:</b> in each small plot, the x-axis is real time since the movie started (minutes) and the y-axis is the position in the movie (minutes). Watching without interruption gives a straight diagonal. A <b>flat stretch</b> is a pause, a <b>drop</b> is a rewind, and a <b>jump up</b> is a skip ahead. The faint line shows uninterrupted playback. All panels share the same axes. The header gives the time from the first to the last movie frame. The raw log sometimes keeps going after the movie ends (a flat tail) or contains logging glitches (vertical lines at the edges, e.g. P4, P21). The cleaned log removes both.</p></figcaption>
+      <div class="plot" data-render="playback"></div>
+      <p class="take" id="take-playback"></p>
+    </figure>
+    <figure class="fig">
+      <figcaption><h3>Patient roster</h3>
+        <p class="how">Click a column header to sort. The "Pauses" column uses the cleaned watchlog (gaps &gt;1 s between displayed frames). Rewinds are counted from the raw log. Neurons with no spikes during the movie count toward the neuron total but lower the mean rate.</p></figcaption>
+      <div class="plot table-wrap" data-render="roster"></div>
+    </figure>
+  </section>
+
+  <!-- 3 -->
+  <section id="electrodes">
+    <div class="sec-head">
+      <div class="eyebrow">3 · Where</div>
+      <h2>Electrodes &amp; brain regions</h2>
+      <p>Each bundle holds 8 microwires. There are 245 bundles with at least one neuron, spread over 1,130 wires. In this page's charts, regions are grouped into amygdala, hippocampus (anterior, middle and posterior), entorhinal cortex, parahippocampal cortex, and "Other" (piriform, perirhinal, fusiform, lingual).</p>
+    </div>
+    <figure class="fig">
+      <figcaption><h3>Where every bundle sits in the brain (MNI space, all 29 patients)</h3>
+        <p class="how"><b>How to read:</b> each marker is one bundle, seen from three directions. Axis labels give the anatomical direction, and all three views use the same millimeter scale. <b>Marker size</b> = number of neurons on the bundle. <b>Color and shape</b> = region. Hover a marker to highlight the same bundle in all three views. Click a legend entry to hide or show a region.</p></figcaption>
+      <div class="legend" data-legend="groups-toggle-mni"></div>
+      <div class="plot" data-render="mni"></div>
+      <p class="take" id="take-mni"></p>
+    </figure>
+      <figure class="fig">
+        <figcaption><h3>Neurons per region: single vs multi-unit</h3>
+          <p class="how"><b>How to read:</b> bar length is the number of neurons in each region. The dark part is single units (confidently one neuron) and the light part is multi-units (a few neurons that couldn't be separated). The colored dot shows the region group used elsewhere on the page. Hover to see the left/right split.</p></figcaption>
+        <div class="legend"><span class="item"><span class="sw" style="background:var(--su)"></span>Single unit</span><span class="item"><span class="sw" style="background:var(--mu)"></span>Multi-unit</span></div>
+        <div class="plot" data-render="regions"></div>
+        <p class="take" id="take-regions"></p>
+      </figure>
+      <figure class="fig">
+        <figcaption><h3>Coverage: which patient has neurons where</h3>
+          <p class="how"><b>How to read:</b> rows are regions and columns are patients. The number in each cell (and its darkness) is how many neurons that patient has in that region. Empty cells mean no neurons there. This matters when you pool neurons into a pseudo-population: some regions depend on just a few patients.</p></figcaption>
+        <div class="plot scroll-x" data-render="coverage"></div>
+        <p class="take" id="take-coverage"></p>
+      </figure>
+  </section>
+
+  <!-- 4 -->
+  <section id="neurons">
+    <div class="sec-head">
+      <div class="eyebrow">4 · What</div>
+      <h2>The neurons themselves</h2>
+      <p>Firing rates, spike-sorting quality and spike shapes for all 2,286 units. Firing rates here are computed only over the analysis window (36.7 s – 79:23), with pauses removed.</p>
+    </div>
+    <figure class="fig">
+      <figcaption><h3>Firing rates are low and spread over three orders of magnitude</h3>
+        <p class="how"><b>How to read:</b> one histogram per region group. The x-axis is the firing rate on a <b>log scale</b> (each tick is 10× the previous one). Bar height is the share of that region's neurons in each rate bin, so regions of different sizes can be compared. The vertical line marks the median.</p></figcaption>
+      <div class="plot" data-render="rates"></div>
+      <p class="take" id="take-rates"></p>
+    </figure>
+    <figure class="fig">
+      <figcaption><h3>Spike-sorting quality: single units vs multi-units</h3>
+        <p class="how"><b>How to read:</b> each panel is one quality metric. The two lines are histograms (share of units per bin) for single units and multi-units. <b>SNR</b>: spike peak relative to background noise (higher is cleaner). <b>ISI &lt; 3 ms</b>: share of spikes that come too soon after the previous one to be from a single neuron (lower is better; values above 3% are counted in the last bin). <b>CV2</b>: spike-timing irregularity (≈1 for random, Poisson-like firing). <b>Isolation distance</b>: how well a unit is separated from other spikes on its wire (higher is better; can't be computed for every unit; values above 1,000 are counted in the last bin). The vertical line shows the value the paper reports.</p></figcaption>
+      <div class="legend"><span class="item"><span class="sw line" style="background:var(--su)"></span>Single units</span><span class="item"><span class="sw line" style="background:var(--mu)"></span>Multi-units</span></div>
+      <div class="plot" data-render="quality"></div>
+      <p class="take" id="take-quality"></p>
+    </figure>
+    <div class="grid2">
+      <figure class="fig">
+        <figcaption><h3>Spike shapes by cell type</h3>
+          <p class="how"><b>How to read:</b> every thin line is one unit's mean waveform, scaled so its peak is 1. The thick line is the median. Time 0 is the spike peak. Putative interneurons have a narrower spike, meaning the waveform recovers faster after the peak.</p></figcaption>
+        <div class="plot" data-render="waveforms"></div>
+        <p class="take" id="take-waveforms"></p>
+      </figure>
+      <figure class="fig">
+        <figcaption><h3>Peak-to-trough width separates the two cell types</h3>
+          <p class="how"><b>How to read:</b> the histogram shows spike widths for single units (time from peak to trough). The authors call anything narrower than <b>0.65 ms</b> (vertical line) an interneuron. Widths come in steps of one sample (0.03 ms). Stacked colors show the label stored in the file. The tall bar at 1.34 ms is units whose trough falls after the end of the 64-sample waveform.</p></figcaption>
+        <div class="legend"><span class="item"><span class="sw" style="background:var(--su)"></span>Pyramidal</span><span class="item"><span class="sw" style="background:var(--int)"></span>Interneuron</span></div>
+        <div class="plot" data-render="width"></div>
+        <p class="take" id="take-width"></p>
+      </figure>
+    </div>
+    <figure class="fig">
+      <figcaption><h3>Neurons per wire</h3>
+        <p class="how"><b>How to read:</b> the number of wires (y) that yielded 1, 2, 3… neurons (x). Only wires with at least one neuron are counted. Neurons that share a wire were separated from one recording, so their activity isn't fully independent.</p></figcaption>
+      <div class="plot" data-render="perwire"></div>
+      <p class="take" id="take-perwire"></p>
+    </figure>
+  </section>
+
+  <!-- 5 -->
+  <section id="movie">
+    <div class="sec-head">
+      <div class="eyebrow">5 · The stimulus</div>
+      <h2>The movie, as 53 labels</h2>
+      <p>The movie itself isn't shared, for copyright reasons. What you get is 53 per-frame labels at 25 fps: who is on screen, whose face is visible, who is speaking, where the scene takes place, and where cuts happen. These labels are the targets for any decoding task, so their structure matters.</p>
+    </div>
+    <figure class="fig">
+      <figcaption><h3>Every label across the full 83.8-minute movie</h3>
+        <p class="how"><b>How to read:</b> each row is one label and runs left to right through the movie. Each pixel column covers several seconds; the darker it is, the more of that time the label is present. The right-hand column gives the share of all frames with the label. Faded areas at both ends are the credits, which the authors exclude. Camera and scene cuts are single-frame events, drawn as ticks. Hover for details.</p></figcaption>
+      <div class="plot" data-render="barcode"></div>
+      <p class="take" id="take-barcode"></p>
+    </figure>
+    <div class="grid2">
+      <figure class="fig">
+        <figcaption><h3>How long shots and scenes last</h3>
+          <p class="how"><b>How to read:</b> histograms of the time between consecutive camera cuts (shot length) and between scene cuts (scene length). Both use a log x-axis. The vertical line marks the median.</p></figcaption>
+        <div class="plot" data-render="shots"></div>
+        <p class="take" id="take-shots"></p>
+      </figure>
+      <figure class="fig">
+        <figcaption><h3>Which labels tend to appear together</h3>
+          <p class="how"><b>How to read:</b> each cell is the frame-by-frame correlation (φ) between two labels. <b>Red</b> = they tend to be present at the same time. <b>Blue</b> = one tends to appear when the other is absent. Gray = unrelated. Only strong values are printed; hover any cell for its value. Strongly linked labels are hard to tell apart in decoding, because a model could be picking up either one.</p></figcaption>
+        <div class="plot scroll-x" data-render="cooc"></div>
+        <p class="take" id="take-cooc"></p>
+      </figure>
+    </div>
+  </section>
+
+  <!-- 6 -->
+  <section id="activity">
+    <div class="sec-head">
+      <div class="eyebrow">6 · Spikes on the movie timeline</div>
+      <h2>Neural activity over the movie</h2>
+      <p>Every spike below has been mapped to movie time, with pauses removed. That's what makes it possible to line up neurons from different patients, who watched on different days, as if they had watched together.</p>
+    </div>
+    <figure class="fig">
+      <figcaption><h3>Raster: three minutes of one patient's neurons, with what was on screen</h3>
+        <p class="how"><b>How to read:</b> each row is one neuron, and each tick is one spike. Rows are grouped by region (colored strip on the left), with the fastest-firing neurons at the top of each group. The bands underneath show the movie labels over the same three minutes (33:00–36:00). Pick a different patient from the menu, and hover a row for that neuron's details.</p></figcaption>
+      <div class="controls"><label for="raster-patient">Patient</label><select id="raster-patient"></select><span id="raster-info"></span></div>
+      <div class="plot" data-render="raster"></div>
+      <p class="take" id="take-raster"></p>
+    </figure>
+    <figure class="fig">
+      <figcaption><h3>All 2,286 neurons across the whole movie</h3>
+        <p class="how"><b>How to read:</b> each thin row is one neuron (about four neurons are averaged per pixel row), and each column is 30 seconds of movie. Color shows whether a neuron fires <b style="color:var(--div-pos)">above</b> or <b style="color:var(--div-neg)">below</b> its own average at that moment, in standard deviations (z-score). Neurons are grouped by region, then by patient. Label strips underneath show what was on screen. Hover for the neuron and time.</p></figcaption>
+      <div class="key"><span>below average</span><span class="keybar"></span><span>above average (z from −2.5 to +2.5)</span></div>
+      <div class="plot" data-render="heat"></div>
+      <p class="take" id="take-heat"></p>
+    </figure>
+    <figure class="fig">
+      <figcaption><h3>Does the movie drive similar activity in different brains?</h3>
+        <p class="how"><b>How to read:</b> for each patient, we take the average activity of all their neurons over time (1-s bins, with slow drifts over about a minute removed). We then correlate it with the average of the <b>other 28 patients</b>. Each dot is that correlation. The gray bar shows the range expected by chance, found by shifting the patient's time series out of sync with the movie 200 times (95% range). A <b>filled dot</b> means the correlation is above chance.</p></figcaption>
+      <div class="plot" data-render="isc"></div>
+      <p class="take" id="take-isc"></p>
+    </figure>
+  </section>
+
+  <!-- 7 -->
+  <section id="responses">
+    <div class="sec-head">
+      <div class="eyebrow">7 · Event-locked activity</div>
+      <h2>How neurons respond to events in the movie</h2>
+      <p>Here each event (a camera cut, Summer appearing, a speaker starting to talk) is treated as a trial, and activity is averaged in the second before and after it. As in the paper, an event only counts if the feature was absent for at least 1 s beforehand. Everything is computed on this page from the NWB files.</p>
+    </div>
+    <figure class="fig">
+      <figcaption><h3>Average response around eight kinds of events</h3>
+        <p class="how"><b>How to read:</b> in each panel, time 0 is the event. The y-axis is firing rate <b>relative to each neuron's own average</b>: 1.0 = normal, 1.2 = 20% above normal. Lines are the averages across neurons in each region (neurons firing ≥0.1 Hz), and the shaded bands show ±1 standard error. <b>Each panel has its own y-axis</b>, so check the tick values before comparing panels. "Other" starts hidden because it has only 85 neurons and is noisy. Click a legend entry to show or hide a region, and hover for exact values.</p></figcaption>
+      <div class="legend" data-legend="groups-toggle-psth"></div>
+      <div class="plot" data-render="psth"></div>
+      <p class="take" id="take-psth"></p>
+    </figure>
+      <figure class="fig">
+        <figcaption><h3>Share of neurons that respond significantly</h3>
+          <p class="how"><b>How to read:</b> each cell gives the percentage of neurons in a region (row) whose spike count in the 1 s after an event differs from the 1 s before it (column). Below the percentage: responsive neurons / neurons tested. The test is a paired Wilcoxon test across events, p &lt; 0.01, so <b>about 1% would be flagged by chance alone</b>. Darker cells mean more responsive neurons. This is a simpler test than the ZETA test the paper uses, so the counts differ a little.</p></figcaption>
+        <div class="plot table-wrap" data-render="responsive"></div>
+        <p class="take" id="take-responsive"></p>
+      </figure>
+      <figure class="fig">
+        <figcaption><h3>Every neuron's response to camera cuts</h3>
+          <p class="how"><b>How to read:</b> each thin row is one neuron's average activity from 1 s before to 1 s after a camera cut (880 cuts), about four neurons per pixel row. Color is the rate relative to that neuron's own rate in the second <i>before</i> the cut: <b style="color:var(--div-pos)">red</b> = above, <b style="color:var(--div-neg)">blue</b> = below (log scale, from ¼× to 4×). Within each region, neurons are sorted by their change in the first 500 ms after the cut, so the most excited neurons are at the top and the most suppressed at the bottom. Neurons firing under 0.1 Hz are too sparse to judge and are drawn neutral. The marks at the right flag neurons with a significant response.</p></figcaption>
+        <div class="key"><span>¼×</span><span class="keybar"></span><span>4× the pre-cut rate</span></div>
+        <div class="plot" data-render="cutheat"></div>
+        <p class="take" id="take-cutheat"></p>
+      </figure>
+  </section>
+
+  <!-- 8 -->
+  <section id="ml">
+    <div class="sec-head">
+      <div class="eyebrow">8 · Before you train anything</div>
+      <h2>Practical facts for machine learning</h2>
+      <p>Two things shape any model trained on this data: how sparse the spike counts are at a given bin size, and how strongly both labels and neural activity are correlated over time. The second is why the authors recommend a 32-second buffer between training and test data.</p>
+    </div>
+    <figure class="fig">
+      <figcaption><h3>How sparse the inputs are at each bin size</h3>
+        <p class="how"><b>How to read:</b> the x-axis shows the bin sizes provided in <code>movie_binning_info</code>. <b>Left panel</b>: the share of bins in which a neuron fires no spikes. <b>Right panel</b>: the average number of spikes per bin (log scale). In both, the dot is the median neuron, the thick bar covers the middle 50% of neurons, and the thin line covers the middle 80%.</p></figcaption>
+      <div class="plot" data-render="sparsity"></div>
+      <p class="take" id="take-sparsity"></p>
+    </figure>
+    <figure class="fig">
+      <figcaption><h3>How long the movie labels and neural activity stay correlated over time</h3>
+        <p class="how"><b>How to read:</b> autocorrelation is the correlation between a signal and a time-shifted copy of itself. The x-axis is the shift. A value near 1 means frames that far apart usually carry the same label, so a test frame that close to a training frame gives the answer away. <b>Left</b>: six movie labels (hover a name to highlight its line). <b>Right</b>: neural activity. The accent line is the median single neuron (band = middle 50%). The gray line compares a patient's whole population pattern at two times, averaged over patients. The vertical line marks the recommended 32-s buffer.</p></figcaption>
+      <div class="plot" data-render="acf"></div>
+      <p class="take" id="take-acf"></p>
+    </figure>
+  </section>
+
+  <footer>
+    <p><b>How this page was made.</b> <code>scripts/build_overview.py</code> reads all 29 NWB files with h5py, computes every statistic shown, and inlines the results into this file. Movie time for each spike comes from linear interpolation through <code>cleaned_watchlogs</code>. Unless a chart says otherwise, analyses use the authors' window of 36.72–4,763.2 s. Checks against the paper: mean firing rate 1.93 Hz, mean SNR 8.20, ISI violations 0.42%, CV2 1.08, median isolation distance 21.8 (1,397 units), 245 bundles, 2.02 neurons per wire. All match the published values.</p>
+    <p>Source: Darcher, Gerken et al., "Human neuron activity during an 83-minute movie from 2,286 neurons and 29 patients", <i>Scientific Data</i> 13:1105 (2026); DANDI:001616.</p>
+  </footer>
+</div>
+<div id="tip" hidden></div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.9.0/d3.min.js"></script>
+<script>
+const DATA = /*__DATA__*/null;
+const G = DATA.meta.groups;
+const GVAR = ['--g0', '--g1', '--g2', '--g3', '--g4'];
+const GSYM = () => [d3.symbolCircle, d3.symbolSquare, d3.symbolTriangle, d3.symbolDiamond, d3.symbolCross];
+const gcol = g => `var(${GVAR[typeof g === 'number' ? g : G.indexOf(g)]})`;
+const fmt = d3.format(',');
+const f1 = d3.format('.1f'), f2 = d3.format('.2f'), f3 = d3.format('.3f'), pct = d3.format('.0%'), pct1 = d3.format('.1%');
+const mmss = s => `${Math.floor(s / 60)}:${String(Math.floor(s % 60)).padStart(2, '0')}`;
+const cssv = n => getComputedStyle(document.documentElement).getPropertyValue(n).trim();
+const rgbOf = n => { const c = d3.rgb(cssv(n)); return [c.r, c.g, c.b]; };
+const U = DATA.units;
+const unitGroup = U.map(u => G.indexOf(u.group));
+
+function decode(s, T) {
+  const bin = atob(s), buf = new Uint8Array(bin.length);
+  for (let i = 0; i < bin.length; i++) buf[i] = bin.charCodeAt(i);
+  return new T(buf.buffer);
+}
+const WAVE = decode(DATA.waveforms, Int8Array);
+const BARCODE = decode(DATA.barcode.data, Uint8Array);
+const HEAT = decode(DATA.heat.data, Int8Array);
+const CUTHEAT = decode(DATA.cut_heat.data, Int8Array);
+
+const PRETTY = {
+  'indoor-setting': 'Indoor (vs outdoor)', 'camera-cuts': 'Camera cuts', 'scenes': 'Scene cuts',
+  'days-of-summer': 'Day-counter cards', 'the-graduate': 'The Graduate clip', 'summer-presence': 'Summer presence',
+  'summer-body-sequence': 'Summer body sequence', 'persons': 'Any person'
+};
+const pretty = n => PRETTY[n] || (n.charAt(0).toUpperCase() + n.slice(1)).replace(/-/g, ' ');
+
+/* ---------- tooltip ---------- */
+const tip = document.getElementById('tip');
+function showTip(ev, html) {
+  tip.innerHTML = html; tip.hidden = false;
+  const pad = 14, r = tip.getBoundingClientRect();
+  let x = ev.clientX + pad, y = ev.clientY + pad;
+  if (x + r.width > innerWidth - 8) x = ev.clientX - r.width - pad;
+  if (y + r.height > innerHeight - 8) y = ev.clientY - r.height - pad;
+  tip.style.left = Math.max(8, x) + 'px'; tip.style.top = Math.max(8, y) + 'px';
+}
+const hideTip = () => { tip.hidden = true; };
+const trow = (color, label, value) => `<div class="r"><span class="sw" style="background:${color}"></span><span>${label}</span><span>${value}</span></div>`;
+
+/* ---------- chart helpers ---------- */
+function svgFor(el, W, H, m) {
+  const svg = d3.select(el).append('svg').attr('width', W).attr('height', H).attr('viewBox', `0 0 ${W} ${H}`).style('display', 'block').style('max-width', '100%');
+  const g = svg.append('g').attr('transform', `translate(${m.l},${m.t})`);
+  return { svg, g, w: W - m.l - m.r, h: H - m.t - m.b };
+}
+function layered(el, W, H) {
+  const wrap = document.createElement('div');
+  wrap.style.cssText = `position:relative;width:${W}px;height:${H}px;max-width:100%`;
+  el.appendChild(wrap);
+  const cv = document.createElement('canvas'), dpr = window.devicePixelRatio || 1;
+  cv.width = Math.round(W * dpr); cv.height = Math.round(H * dpr);
+  cv.style.cssText = `position:absolute;inset:0;width:${W}px;height:${H}px`;
+  wrap.appendChild(cv);
+  const ctx = cv.getContext('2d'); ctx.scale(dpr, dpr);
+  const svg = d3.select(wrap).append('svg').attr('width', W).attr('height', H).style('position', 'absolute').style('inset', '0').style('overflow', 'visible');
+  return { wrap, cv, ctx, svg, dpr };
+}
+function axisLeft(g, y, opts = {}) {
+  const a = d3.axisLeft(y).ticks(opts.ticks || 5).tickSize(0).tickPadding(6);
+  if (opts.format) a.tickFormat(opts.format);
+  if (opts.values) a.tickValues(opts.values);
+  return g.append('g').attr('class', 'ax').call(a).call(s => s.select('.domain').remove());
+}
+function axisBottom(g, x, h, opts = {}) {
+  const a = d3.axisBottom(x).tickSize(4).tickPadding(4);
+  if (opts.ticks) a.ticks(opts.ticks);
+  if (opts.format) a.tickFormat(opts.format);
+  if (opts.values) a.tickValues(opts.values);
+  return g.append('g').attr('class', 'ax').attr('transform', `translate(0,${h})`).call(a);
+}
+function gridY(g, y, w, ticks = 5, values) {
+  g.append('g').attr('class', 'grid').selectAll('line').data(values || y.ticks(ticks)).join('line')
+    .attr('x1', 0).attr('x2', w).attr('y1', d => y(d)).attr('y2', d => y(d));
+}
+function label(sel, x, y, text, cls = 'axlabel', anchor = 'middle', rotate = false) {
+  const t = sel.append('text').attr('class', cls).attr('text-anchor', anchor).text(text);
+  if (rotate) t.attr('transform', `translate(${x},${y}) rotate(-90)`); else t.attr('x', x).attr('y', y);
+  return t;
+}
+function colTop(x, y0, w, y1, r = 4) {           // column rounded at top, square at baseline
+  const h = y0 - y1; r = Math.max(0, Math.min(r, w / 2, h));
+  return `M${x},${y0}V${y1 + r}Q${x},${y1} ${x + r},${y1}H${x + w - r}Q${x + w},${y1} ${x + w},${y1 + r}V${y0}Z`;
+}
+function barRight(x0, y, x1, h, r = 4) {         // bar rounded at right end
+  const w = x1 - x0; r = Math.max(0, Math.min(r, h / 2, w));
+  return `M${x0},${y}H${x1 - r}Q${x1},${y} ${x1},${y + r}V${y + h - r}Q${x1},${y + h} ${x1 - r},${y + h}H${x0}Z`;
+}
+function lut(a, b, mid) {                         // 256-entry color ramp
+  const out = [];
+  const ia = mid ? d3.interpolateLab(cssv(a), cssv(mid)) : d3.interpolateLab(cssv(a), cssv(b));
+  const ib = mid ? d3.interpolateLab(cssv(mid), cssv(b)) : null;
+  for (let i = 0; i < 256; i++) {
+    const t = i / 255;
+    const c = d3.rgb(mid ? (t < .5 ? ia(t * 2) : ib((t - .5) * 2)) : ia(t));
+    out.push([c.r, c.g, c.b]);
+  }
+  return out;
+}
+const lum = ([r, g, b]) => (0.299 * r + 0.587 * g + 0.114 * b) / 255;
+const W = el => Math.max(280, el.clientWidth);
+const take = (id, html) => { const e = document.getElementById('take-' + id); if (e) e.innerHTML = html; };
+
+/* ---------- legends ---------- */
+const hidden = { mni: new Set(), psth: new Set(['Other']) };
+function buildLegends() {
+  document.querySelectorAll('[data-legend]').forEach(el => {
+    const kind = el.dataset.legend;
+    el.innerHTML = '';
+    G.forEach((g, i) => {
+      const toggle = kind.startsWith('groups-toggle');
+      const key = kind.split('-').pop();
+      const item = document.createElement(toggle ? 'button' : 'span');
+      item.className = 'item' + (toggle && hidden[key].has(g) ? ' off' : '');
+      const sym = d3.symbol(GSYM()[i], 70)();
+      item.innerHTML = kind === 'groups-toggle-mni'
+        ? `<svg width="14" height="14" viewBox="-7 -7 14 14"><path d="${sym}" fill="${gcol(i)}"/></svg>${g}`
+        : `<span class="sw" style="background:${gcol(i)}"></span>${g}`;
+      if (toggle) {
+        item.setAttribute('aria-pressed', String(!hidden[key].has(g)));
+        item.onclick = () => {
+          hidden[key].has(g) ? hidden[key].delete(g) : hidden[key].add(g);
+          buildLegends(); renderOne(key);
+        };
+      }
+      el.appendChild(item);
+    });
+  });
+}
+
+/* ---------- renderers ---------- */
+const R = {};
+
+R.stats = () => {
+  const m = DATA.meta, P = DATA.patients;
+  const hours = d3.sum(P, p => p.session_min) / 60;
+  const tiles = [
+    [m.n_patients, 'patients', `${d3.sum(P, p => p.sex === 'F')} F · ${d3.sum(P, p => p.sex === 'M')} M · ages ${d3.min(P, p => p.age)}–${d3.max(P, p => p.age)}`],
+    [fmt(m.n_units), 'neurons', `${fmt(m.n_su)} single · ${fmt(m.n_units - m.n_su)} multi`],
+    [(m.spikes_total / 1e6).toFixed(1) + 'M', 'spikes in the files', `${f1(hours)} h of recording`],
+    ['83.8', 'minutes of movie', `${fmt(m.n_frames)} frames @ 25 fps`],
+    ['53', 'frame-level labels', 'characters, faces, speech, places, cuts'],
+    [m.n_bundles, 'electrode bundles', `${fmt(m.n_wires)} wires with neurons`],
+  ];
+  document.getElementById('stats').innerHTML = tiles.map(([v, l, s]) => `<div class="stat"><div class="v">${v}</div><div class="l">${l}</div><div class="s">${s}</div></div>`).join('');
+};
+
+R.patients = el => {
+  const P = DATA.patients, m = { t: 10, r: 8, b: 42, l: 46 };
+  const c = svgFor(el, W(el), 300, m);
+  const x = d3.scaleBand(P.map(p => p.id), [0, c.w]).paddingInner(.25).paddingOuter(.1);
+  const y = d3.scaleLinear([0, d3.max(P, p => p.units)], [c.h, 0]).nice();
+  gridY(c.g, y, c.w); axisLeft(c.g, y);
+  axisBottom(c.g, x, c.h).call(s => s.selectAll('line').remove());
+  label(c.svg, m.l + c.w / 2, m.t + c.h + 36, 'Patient ID');
+  label(c.svg, 12, m.t + c.h / 2, 'Neurons', 'axlabel', 'middle', true);
+  const bw = Math.min(24, x.bandwidth());
+  P.forEach(p => {
+    const x0 = x(p.id) + (x.bandwidth() - bw) / 2;
+    const segs = G.map((g, i) => ({ g, i, v: p.by_group[g] })).filter(s => s.v > 0);
+    let acc = 0;
+    segs.forEach((s, k) => {
+      const yb = y(acc) - (k > 0 ? 2 : 0), yt = y(acc + s.v); acc += s.v;
+      if (yb - yt <= 0) return;
+      c.g.append('path').attr('d', k === segs.length - 1 ? colTop(x0, yb, bw, yt) : `M${x0},${yb}V${yt}H${x0 + bw}V${yb}Z`).style('fill', gcol(s.i));
+    });
+    c.g.append('rect').attr('x', x(p.id) - x.step() * x.paddingInner() / 2).attr('width', x.step()).attr('y', 0).attr('height', c.h)
+      .attr('fill', 'transparent')
+      .on('mousemove', ev => showTip(ev, `<div class="t">Patient ${p.id}</div><div class="m">${p.age} y · ${p.sex} · recorded ${p.year} (${p.system})</div>
+        <div class="m">${p.units} neurons: ${p.su} single / ${p.units - p.su} multi</div>` +
+        G.filter(g => p.by_group[g]).map(g => trow(gcol(g), g, p.by_group[g])).join('')))
+      .on('mouseleave', hideTip);
+  });
+  const med = d3.median(P, p => p.units), top = P.slice().sort((a, b) => b.units - a.units);
+  const tot = G.map(g => [g, d3.sum(P, p => p.by_group[g])]).sort((a, b) => b[1] - a[1]);
+  take('patients', `A median of <b>${med}</b> neurons per patient (range ${d3.min(P, p => p.units)}–${top[0].units}). Patients ${top[0].id}, ${top[1].id} and ${top[2].id} contribute the most. By region, <b>${tot[0][0].toLowerCase()}</b> has the most neurons (${fmt(tot[0][1])}), followed by ${tot[1][0].toLowerCase()} (${fmt(tot[1][1])}). No patient covers every region.`);
+};
+
+R.playback = el => {
+  const PB = DATA.playback, P = DATA.patients, width = W(el);
+  const cols = Math.max(2, Math.floor((width + 12) / 172)), pw = (width - 12 * (cols - 1)) / cols, ph = 92;
+  const box = d3.select(el).append('div').attr('class', 'multiples').style('grid-template-columns', `repeat(${cols}, 1fr)`);
+  const xmax = d3.max(PB, p => d3.max(p.wall));
+  PB.forEach(pb => {
+    const p = P.find(q => q.id === pb.id);
+    const mini = box.append('div').attr('class', 'mini');
+    mini.append('div').attr('class', 'hd').html(`<b>P${p.id}</b><span>${Math.round(p.session_min)} min to watch</span>`);
+    const m = { t: 4, r: 4, b: 16, l: 22 };
+    const c = svgFor(mini.node(), pw, ph + m.t + m.b, m);
+    const x = d3.scaleLinear([0, xmax], [0, c.w]), y = d3.scaleLinear([0, 84], [c.h, 0]);
+    c.g.append('g').attr('class', 'grid').selectAll('line').data([0, 40, 80]).join('line').attr('x1', 0).attr('x2', c.w).attr('y1', d => y(d)).attr('y2', d => y(d));
+    axisLeft(c.g, y, { values: [0, 40, 80] });
+    axisBottom(c.g, x, c.h, { values: [0, 60, 120] });
+    const w0 = pb.wall[0], m0 = pb.movie[0];
+    c.g.append('line').attr('x1', x(w0)).attr('y1', y(m0)).attr('x2', x(w0 + 84 - m0)).attr('y2', y(84)).style('stroke', 'var(--axis)').style('stroke-width', 1);
+    c.g.append('path').attr('d', d3.line().x((d, i) => x(pb.wall[i])).y((d, i) => y(pb.movie[i]))(pb.wall))
+      .style('fill', 'none').style('stroke', 'var(--accent)').style('stroke-width', 1.6).style('stroke-linejoin', 'round');
+    const back = p.skips_back;
+    mini.append('div').attr('class', 'ft').text(`${p.pauses.length} pause${p.pauses.length === 1 ? '' : 's'} (${f1(p.pause_total_s / 60)} min)` + (back ? ` · ${back} rewind${back === 1 ? '' : 's'}` : ''));
+    c.svg.on('mousemove', ev => {
+      const top = p.pauses.slice().sort((a, b) => b.dur - a.dur).slice(0, 5);
+      showTip(ev, `<div class="t">Patient ${p.id}</div><div class="m">session ${f1(p.session_min)} min · ${p.pauses.length} pauses totaling ${f1(p.pause_total_s / 60)} min</div>
+        <div class="m">raw log: ${p.skips_back} rewinds, ${p.skips_fwd} jumps ahead (&gt;0.5 s)</div>` +
+        (top.length ? '<div class="m" style="margin-top:4px">Longest pauses:</div>' + top.map(q => `<div class="m">· ${q.dur < 120 ? f1(q.dur) + ' s' : f1(q.dur / 60) + ' min'} at movie ${mmss(q.movie * 60)}</div>`).join('') : ''));
+    }).on('mouseleave', hideTip);
+  });
+  const all = P.flatMap(p => p.pauses), durs = all.map(q => q.dur);
+  const worst = P.slice().sort((a, b) => b.pause_total_s - a.pause_total_s)[0];
+  const scrub = P.filter(p => p.skips_back >= 5).map(p => 'P' + p.id);
+  take('playback', `Most sessions are close to the diagonal. Across patients there are <b>${all.length}</b> pauses longer than 1 s (median ${f1(d3.median(durs))} s). Patient ${worst.id} stopped for <b>${Math.round(worst.pause_total_s / 60)} min</b> in total, so their session lasted ${Math.round(worst.session_min)} min for an 84-min movie. The raw logs of ${scrub.join(', ')} contain repeated backward jumps (rewinds or logging glitches). The cleaned watchlogs cut all of this out so everyone lines up on one movie timeline, which is why spikes need to be re-timed before any analysis.`);
+};
+
+let rosterSort = { key: 'id', dir: 1 };
+R.roster = el => {
+  const P = DATA.patients.map(p => ({ ...p, mu: p.units - p.su, supct: p.su / p.units, npause: p.pauses.length }));
+  const cols = [
+    ['id', 'Patient', p => 'P' + p.id, true], ['age', 'Age', p => p.age, true], ['sex', 'Sex', p => p.sex],
+    ['year', 'Year', p => `${p.year} <span class="pill">${p.system}</span>`], ['bundles', 'Bundles', p => p.bundles, true],
+    ['units', 'Neurons', p => `${p.units}<span class="ibar" style="width:${p.units / 137 * 60}px"></span>`, true],
+    ['supct', 'Single-unit share', p => pct(p.supct), true],
+    ['regions', 'Regions', p => p.regions.map(r => `<span class="pill" title="${DATA.meta.region_names[r]}">${r}</span>`).join('')],
+    ['session_min', 'Session (min)', p => f1(p.session_min), true], ['npause', 'Pauses', p => `${p.npause} · ${f1(p.pause_total_s / 60)} min`, true],
+    ['skips_back', 'Rewinds', p => p.skips_back, true], ['mean_rate', 'Mean rate (Hz)', p => f2(p.mean_rate), true],
+  ];
+  const k = rosterSort.key;
+  P.sort((a, b) => (typeof a[k] === 'string' ? a[k].localeCompare(b[k]) : (a[k] - b[k])) * rosterSort.dir);
+  const t = document.createElement('table');
+  t.innerHTML = `<thead><tr>${cols.map(([key, name, , num]) => `<th class="${num ? 'num' : ''}"><button data-k="${key}" aria-label="Sort by ${name}">${name}${rosterSort.key === key ? (rosterSort.dir > 0 ? ' ↑' : ' ↓') : ''}</button></th>`).join('')}</tr></thead>
+    <tbody>${P.map(p => `<tr>${cols.map(([, , f, num]) => `<td class="${num ? 'num' : ''}">${f(p)}</td>`).join('')}</tr>`).join('')}</tbody>`;
+  t.querySelectorAll('th button').forEach(b => b.onclick = () => {
+    const key = b.dataset.k; rosterSort = { key, dir: rosterSort.key === key ? -rosterSort.dir : 1 }; renderOne('roster');
+  });
+  el.appendChild(t);
+};
+
+R.mni = el => {
+  const B = DATA.bundles.filter(b => !hidden.mni.has(b.group)).sort((a, b) => b.units - a.units);
+  const all = DATA.bundles, width = W(el), gap = 16;
+  const views = [
+    { name: 'From above', h: 'x', v: 'y', hl: ['← Left', 'Right →'], vl: ['Posterior', 'Anterior'] },
+    { name: 'From the side', h: 'y', v: 'z', hl: ['← Posterior', 'Anterior →'], vl: ['Inferior', 'Superior'] },
+    { name: 'From the front', h: 'x', v: 'z', hl: ['← Left', 'Right →'], vl: ['Inferior', 'Superior'] },
+  ];
+  const ext = k => { const e = d3.extent(all, b => b[k]); return [Math.floor(e[0] - 6), Math.ceil(e[1] + 6)]; };
+  const E = { x: ext('x'), y: ext('y'), z: ext('z') };
+  const perRow = width > 860 ? 3 : 1;
+  const m = { t: 24, r: 10, b: 34, l: 34 };
+  const panelW = (width - gap * (perRow - 1)) / perRow;
+  const k = d3.min(views, v => (panelW - m.l - m.r) / (E[v.h][1] - E[v.h][0]));
+  const rowBox = d3.select(el).append('div').style('display', 'flex').style('flex-wrap', 'wrap').style('gap', gap + 'px');
+  const sz = d3.scaleLinear([1, d3.max(all, b => b.units)], [22, 280]);
+  const handlers = [];
+  let hoverKey = null;
+  views.forEach(v => {
+    const pw = (E[v.h][1] - E[v.h][0]) * k, ph = (E[v.v][1] - E[v.v][0]) * k;
+    const c = svgFor(rowBox.append('div').node(), pw + m.l + m.r, ph + m.t + m.b, m);
+    const x = d3.scaleLinear(E[v.h], [0, pw]), y = d3.scaleLinear(E[v.v], [ph, 0]);
+    c.g.append('rect').attr('width', pw).attr('height', ph).attr('rx', 6).style('fill', 'var(--zero)');
+    const tx = x.ticks(4), ty = y.ticks(4);
+    c.g.append('g').attr('class', 'grid').selectAll('line').data(tx).join('line').attr('x1', d => x(d)).attr('x2', d => x(d)).attr('y1', 0).attr('y2', ph);
+    c.g.append('g').attr('class', 'grid').selectAll('line').data(ty).join('line').attr('y1', d => y(d)).attr('y2', d => y(d)).attr('x1', 0).attr('x2', pw);
+    axisBottom(c.g, x, ph, { values: tx }).call(s => s.select('.domain').remove());
+    axisLeft(c.g, y, { values: ty });
+    label(c.svg, m.l, 14, v.name, 'ptitle', 'start');
+    label(c.svg, m.l, m.t + ph + 30, v.hl[0], 'psub', 'start');
+    label(c.svg, m.l + pw, m.t + ph + 30, v.hl[1], 'psub', 'end');
+    label(c.svg, m.l + pw, 14, `↑ ${v.vl[1]} · ↓ ${v.vl[0]}`, 'psub', 'end');
+    const marks = c.g.append('g').selectAll('path').data(B).join('path')
+      .attr('transform', b => `translate(${x(b[v.h])},${y(b[v.v])})`)
+      .attr('d', b => d3.symbol(GSYM()[G.indexOf(b.group)], sz(b.units))())
+      .style('fill', b => gcol(b.group)).style('fill-opacity', .8).style('stroke', 'var(--surface)').style('stroke-width', 1);
+    const pts = B.map(b => [m.l + x(b[v.h]), m.t + y(b[v.v])]);
+    const del = d3.Delaunay.from(pts);
+    handlers.push(key => marks.style('stroke', b => (b.p + b.name) === key ? 'var(--ink)' : 'var(--surface)')
+      .style('stroke-width', b => (b.p + b.name) === key ? 2.5 : 1)
+      .style('fill-opacity', b => key == null || (b.p + b.name) === key ? .8 : .35));
+    c.svg.on('mousemove', ev => {
+      if (!B.length) return;
+      const [mx, my] = d3.pointer(ev), i = del.find(mx, my), b = B[i];
+      if (Math.hypot(pts[i][0] - mx, pts[i][1] - my) > 18) { if (hoverKey) { hoverKey = null; handlers.forEach(h => h(null)); } hideTip(); return; }
+      if (hoverKey !== b.p + b.name) { hoverKey = b.p + b.name; handlers.forEach(h => h(hoverKey)); }
+      showTip(ev, `<div class="t">Patient ${b.p} · bundle ${b.name}</div><div class="m">${DATA.meta.region_names[b.region]} (${b.hemi === 'L' ? 'left' : 'right'})</div>
+        <div class="m">${b.units} neurons on ${b.wires} wire${b.wires > 1 ? 's' : ''}</div><div class="m">MNI x ${b.x}, y ${b.y}, z ${b.z} mm</div>`);
+    }).on('mouseleave', () => { hoverKey = null; handlers.forEach(h => h(null)); hideTip(); });
+  });
+  const L = all.filter(b => b.hemi === 'L').length;
+  const my = g => Math.round(d3.median(all.filter(b => b.group === g), b => b.y));
+  const q = (k, p) => Math.round(d3.quantile(all.map(b => b[k]).sort(d3.ascending), p));
+  take('mni', `<b>${all.length}</b> bundles: ${L} in the left hemisphere and ${all.length - L} in the right, mirrored across the midline. Nearly all sit in a compact medial-temporal band (y from ${q('y', .02)} to ${q('y', .98)} mm, z from ${q('z', .02)} to ${q('z', .98)} mm). From front to back: <b>amygdala</b> and <b>entorhinal cortex</b> sit furthest forward (median y ${my('Amygdala')} and ${my('Entorhinal cx')} mm), hippocampus is in the middle (${my('Hippocampus')} mm), and <b>parahippocampal cortex</b> is furthest back (${my('Parahippocampal cx')} mm). Bundles were placed for clinical reasons, so the exact spot sampled within each region differs between patients.`);
+};
+
+R.regions = el => {
+  const order = ['A', 'AH', 'MH', 'PH', 'EC', 'PHC', 'PRC', 'PIC', 'FF', 'LG'];
+  const rows = order.map(r => {
+    const u = U.filter(x => x.region === r);
+    return { r, name: DATA.meta.region_names[r], group: u[0]?.group, su: u.filter(x => x.su).length, mu: u.filter(x => !x.su).length,
+      L: u.filter(x => x.hemi === 'L').length, R: u.filter(x => x.hemi === 'R').length, pts: new Set(u.map(x => x.p)).size };
+  }).filter(d => d.su + d.mu > 0);
+  const m = { t: 4, r: 44, b: 30, l: 176 }, rowH = 28;
+  const c = svgFor(el, Math.min(W(el), 900), rows.length * rowH + m.t + m.b, m);
+  const y = d3.scaleBand(rows.map(d => d.r), [0, c.h]).padding(.3);
+  const x = d3.scaleLinear([0, d3.max(rows, d => d.su + d.mu)], [0, c.w]).nice();
+  c.g.append('g').attr('class', 'grid').selectAll('line').data(x.ticks(5)).join('line').attr('x1', d => x(d)).attr('x2', d => x(d)).attr('y1', 0).attr('y2', c.h);
+  axisBottom(c.g, x, c.h, { ticks: 5 }).call(s => s.select('.domain').remove());
+  const bh = Math.min(20, y.bandwidth());
+  rows.forEach(d => {
+    const yy = y(d.r) + (y.bandwidth() - bh) / 2;
+    c.g.append('rect').attr('x', 0).attr('y', yy).attr('width', Math.max(0, x(d.su))).attr('height', bh).style('fill', 'var(--su)');
+    if (d.mu) c.g.append('path').attr('d', barRight(x(d.su) + 2, yy, x(d.su + d.mu), bh)).style('fill', 'var(--mu)');
+    c.g.append('text').attr('class', 'vlabel').attr('x', x(d.su + d.mu) + 6).attr('y', yy + bh / 2 + 4).text(d.su + d.mu);
+    c.svg.append('circle').attr('cx', 10).attr('cy', m.t + yy + bh / 2).attr('r', 4).style('fill', gcol(d.group));
+    c.svg.append('text').attr('class', 'axlabel').attr('x', 22).attr('y', m.t + yy + bh / 2 + 4).text(d.name);
+    c.g.append('rect').attr('x', -m.l).attr('y', y(d.r) - y.step() * y.padding() / 2).attr('width', c.w + m.l + m.r).attr('height', y.step()).attr('fill', 'transparent')
+      .on('mousemove', ev => showTip(ev, `<div class="t">${d.name}</div>${trow('var(--su)', 'Single units', d.su)}${trow('var(--mu)', 'Multi-units', d.mu)}
+        <div class="m" style="margin-top:4px">left ${d.L} · right ${d.R} · from ${d.pts} patient${d.pts > 1 ? 's' : ''}</div>`))
+      .on('mouseleave', hideTip);
+  });
+  label(c.svg, m.l + c.w / 2, m.t + c.h + 28, 'Neurons');
+  const byN = rows.slice().sort((a, b) => (b.su + b.mu) - (a.su + a.mu)), hip = U.filter(u => u.group === 'Hippocampus').length;
+  const one = rows.filter(d => d.pts === 1).map(d => d.name.toLowerCase());
+  take('regions', `Coverage is uneven. The <b>${byN[0].name.toLowerCase()}</b> (${byN[0].su + byN[0].mu}) and <b>${byN[1].name.toLowerCase()}</b> (${byN[1].su + byN[1].mu}) have the most neurons, and the three hippocampal segments add up to ${fmt(hip)}. The ${one.join(', ')} each come from a <b>single patient</b>, so conclusions about those regions rest on one person.`);
+};
+
+R.coverage = el => {
+  const order = ['A', 'AH', 'MH', 'PH', 'EC', 'PHC', 'PRC', 'PIC', 'FF', 'LG'];
+  const P = DATA.patients.map(p => p.id);
+  const cnt = {}; U.forEach(u => { const k = u.region + '|' + u.p; cnt[k] = (cnt[k] || 0) + 1; });
+  const max = d3.max(Object.values(cnt));
+  const m = { t: 22, r: 4, b: 4, l: 44 };
+  const cell = Math.max(18, Math.min(30, (W(el) - m.l - m.r) / P.length));
+  const c = svgFor(el, cell * P.length + m.l + m.r, cell * order.length + m.t + m.b, m);
+  const L = lut('--seq-lo', '--seq-hi');
+  const s = d3.scaleSqrt([0, max], [0, 255]);
+  order.forEach((r, ri) => {
+    c.svg.append('text').attr('class', 'psub').attr('x', m.l - 8).attr('y', m.t + ri * cell + cell / 2 + 4).attr('text-anchor', 'end').text(r)
+      .append('title').text(DATA.meta.region_names[r]);
+    P.forEach((p, pi) => {
+      const v = cnt[r + '|' + p] || 0, col = L[Math.round(s(v))];
+      c.g.append('rect').attr('x', pi * cell + 1).attr('y', ri * cell + 1).attr('width', cell - 2).attr('height', cell - 2).attr('rx', 3)
+        .style('fill', v ? `rgb(${col})` : 'var(--zero)')
+        .on('mousemove', ev => showTip(ev, `<div class="t">Patient ${p} · ${DATA.meta.region_names[r]}</div><div class="m">${v} neuron${v === 1 ? '' : 's'}</div>`))
+        .on('mouseleave', hideTip);
+      if (v && cell >= 20) c.g.append('text').attr('x', pi * cell + cell / 2).attr('y', ri * cell + cell / 2 + 3.5).attr('text-anchor', 'middle')
+        .style('font', '10px var(--mono)').style('pointer-events', 'none').style('fill', lum(col) > .55 ? 'var(--ink)' : '#fff').text(v);
+    });
+  });
+  P.forEach((p, pi) => c.svg.append('text').attr('class', 'psub').attr('x', m.l + pi * cell + cell / 2).attr('y', 14).attr('text-anchor', 'middle').text(p));
+  const nP = r => new Set(U.filter(u => u.region === r).map(u => u.p)).size;
+  take('coverage', `Amygdala and anterior hippocampus neurons come from <b>${nP('A')}</b> and <b>${nP('AH')}</b> patients, so a pseudo-population for those regions draws on many people. Middle hippocampus comes from ${nP('MH')} patient and piriform cortex from ${nP('PIC')}. Before comparing regions, check how many patients each one really represents.`);
+};
+
+R.rates = el => {
+  const width = W(el), cols = width > 900 ? 5 : width > 560 ? 3 : 2, gap = 14;
+  const pw = (width - gap * (cols - 1)) / cols;
+  const box = d3.select(el).append('div').attr('class', 'multiples').style('grid-template-columns', `repeat(${cols}, 1fr)`);
+  const bins = d3.range(-2, 2.001, 0.125);
+  const data = G.map((g, gi) => {
+    const r = U.filter((u, i) => unitGroup[i] === gi && u.rate > 0).map(u => Math.log10(u.rate));
+    const h = d3.bin().domain([-2, 2]).thresholds(bins)(r.map(v => Math.max(-2, Math.min(1.999, v))));
+    return { g, gi, n: U.filter((u, i) => unitGroup[i] === gi).length, h, total: r.length, med: d3.median(U.filter((u, i) => unitGroup[i] === gi), u => u.rate) };
+  });
+  const ymax = d3.max(data, d => d3.max(d.h, b => b.length / d.total));
+  data.forEach(d => {
+    const m = { t: 30, r: 14, b: 34, l: 34 };
+    const c = svgFor(box.append('div').node(), pw, 190, m);
+    const x = d3.scaleLinear([-2, 2], [0, c.w]), y = d3.scaleLinear([0, ymax], [c.h, 0]).nice();
+    gridY(c.g, y, c.w, 3); axisLeft(c.g, y, { ticks: 3, format: pct });
+    axisBottom(c.g, x, c.h, { values: [-2, -1, 0, 1, 2], format: v => ({ '-2': '0.01', '-1': '0.1', '0': '1', '1': '10', '2': '100' })[v] });
+    label(c.svg, m.l, 13, d.g, 'ptitle', 'start');
+    label(c.svg, m.l, 25, `n = ${fmt(d.n)} · median ${f2(d.med)} Hz`, 'psub', 'start');
+    d.h.forEach(b => {
+      const v = b.length / d.total; if (!v) return;
+      const x0 = x(b.x0) + .5, x1 = x(b.x1) - 1;
+      c.g.append('path').attr('d', colTop(x0, c.h, x1 - x0, y(v), 2)).style('fill', gcol(d.gi))
+        .on('mousemove', ev => showTip(ev, `<div class="t">${d.g}</div><div class="m">${f2(10 ** b.x0)}–${f2(10 ** b.x1)} Hz: ${b.length} neurons (${pct1(v)})</div>`))
+        .on('mouseleave', hideTip);
+    });
+    const mx = x(Math.log10(d.med));
+    c.g.append('line').attr('class', 'rule').attr('x1', mx).attr('x2', mx).attr('y1', -2).attr('y2', c.h);
+    label(c.svg, m.l + c.w / 2, 190 - 4, 'Firing rate (Hz, log)');
+  });
+  const rates = U.map(u => u.rate), slow = rates.filter(r => r < 0.1).length, fastU = U.filter(u => u.rate >= 10);
+  const bySpeed = data.slice().sort((a, b) => a.med - b.med);
+  take('rates', `The typical neuron fires about <b>${f2(d3.median(rates))} Hz</b>: less than one spike per second (mean ${f2(d3.mean(rates))} Hz, matching the paper's 1.93). <b>${slow}</b> neurons fire under 0.1 Hz during the movie, about 470 spikes or fewer in 79 minutes, which is too few to estimate a response reliably. At the other end, ${fastU.length} fire at 10 Hz or more (${fastU.filter(u => u.su).length} of them single units). ${bySpeed[0].g} neurons fire slowest (median ${f2(bySpeed[0].med)} Hz) and ${bySpeed[bySpeed.length - 1].g.toLowerCase()} fastest (${f2(bySpeed[bySpeed.length - 1].med)} Hz), but the distributions overlap heavily.`);
+};
+
+R.quality = el => {
+  const width = W(el), cols = width > 900 ? 4 : 2, gap = 16, pw = (width - gap * (cols - 1)) / cols;
+  const box = d3.select(el).append('div').attr('class', 'multiples').style('grid-template-columns', `repeat(${cols}, 1fr)`);
+  const metrics = [
+    { k: 'snr', name: 'Peak SNR', dom: [0, 30], step: 1, ref: 8.19, refl: 'paper mean 8.19', fmt: d3.format('d') },
+    { k: 'isi', name: 'ISI < 3 ms (%)', dom: [0, 3], step: .1, ref: 1.72, refl: '95% below', fmt: d3.format('.1f') },
+    { k: 'cv2', name: 'CV2 (irregularity)', dom: [.6, 1.6], step: .025, ref: 1.08, refl: 'paper mean 1.08', fmt: d3.format('.1f') },
+    { k: 'iso', name: 'Isolation distance (log)', dom: [0, 3], step: .1, log: true, ref: Math.log10(21.82), refl: 'paper median 21.8', fmt: v => d3.format('~s')(10 ** v) },
+  ];
+  metrics.forEach(mt => {
+    const m = { t: 22, r: 8, b: 34, l: 36 };
+    const c = svgFor(box.append('div').node(), pw, 200, m);
+    const x = d3.scaleLinear(mt.dom, [0, c.w]);
+    const th = d3.range(mt.dom[0], mt.dom[1] + 1e-9, mt.step);
+    const series = [true, false].map(su => {
+      const vals = U.filter(u => u.su === su && u[mt.k] != null).map(u => mt.log ? Math.log10(Math.max(1, u[mt.k])) : u[mt.k]);
+      const h = d3.bin().domain(mt.dom).thresholds(th)(vals.map(v => Math.max(mt.dom[0], Math.min(mt.dom[1] - 1e-9, v))));
+      return { su, n: vals.length, pts: h.map(b => [b.x0, b.length / vals.length]).concat([[mt.dom[1], (h[h.length - 1]?.length || 0) / vals.length]]) };
+    });
+    const y = d3.scaleLinear([0, d3.max(series, s => d3.max(s.pts, p => p[1]))], [c.h, 0]).nice();
+    gridY(c.g, y, c.w, 3); axisLeft(c.g, y, { ticks: 3, format: pct });
+    axisBottom(c.g, x, c.h, { ticks: 5, format: mt.fmt, values: mt.log ? [0, 1, 2, 3] : undefined });
+    label(c.svg, m.l, 13, mt.name, 'ptitle', 'start');
+    series.forEach(s => {
+      c.g.append('path').attr('d', d3.line().curve(d3.curveStepAfter).x(p => x(p[0])).y(p => y(p[1]))(s.pts))
+        .style('fill', 'none').style('stroke', s.su ? 'var(--su)' : 'var(--mu)').style('stroke-width', 2);
+    });
+    const rx = x(mt.ref);
+    c.g.append('line').attr('class', 'rule').attr('x1', rx).attr('x2', rx).attr('y1', 0).attr('y2', c.h);
+    c.g.append('text').attr('class', 'vlabel').attr('x', rx + (rx > c.w - 110 ? -4 : 4)).attr('y', 10).attr('text-anchor', rx > c.w - 110 ? 'end' : 'start').text(mt.refl);
+    c.g.append('rect').attr('width', c.w).attr('height', c.h).attr('fill', 'transparent')
+      .on('mousemove', ev => {
+        const xv = x.invert(d3.pointer(ev)[0]), i = Math.max(0, Math.min(th.length - 2, Math.floor((xv - mt.dom[0]) / mt.step)));
+        const lo = mt.log ? f1(10 ** th[i]) : f2(th[i]), hi = mt.log ? f1(10 ** th[i + 1]) : f2(th[i + 1]);
+        showTip(ev, `<div class="t">${mt.name}: ${lo}–${hi}</div>${trow('var(--su)', `Single units (n=${fmt(series[0].n)})`, pct1(series[0].pts[i][1]))}${trow('var(--mu)', `Multi-units (n=${fmt(series[1].n)})`, pct1(series[1].pts[i][1]))}`);
+      }).on('mouseleave', hideTip);
+  });
+  const med = (su, k) => d3.median(U.filter(u => u.su === su && u[k] != null), u => u[k]);
+  take('quality', `Single units are cleaner on every metric. Median SNR is <b>${f1(med(true, 'snr'))}</b> for single units vs ${f1(med(false, 'snr'))} for multi-units, and median ISI violations are ${f2(med(true, 'isi'))}% vs ${f2(med(false, 'isi'))}%. For analyses about a single neuron's own properties (latency, tuning), the authors suggest using only single units. For population decoding, pooling both is fine.`);
+};
+
+R.waveforms = el => {
+  const width = W(el), gap = 12;
+  const types = [['pyramidal', 'Pyramidal', '--su'], ['interneuron', 'Interneuron', '--int'], ['multi-unit', 'Multi-unit', '--muted']];
+  const cols = width > 520 ? 3 : 1, pw = (width - gap * (cols - 1)) / cols, ph = 190;
+  const box = d3.select(el).append('div').attr('class', 'multiples').style('grid-template-columns', `repeat(${cols}, 1fr)`);
+  const t = d3.range(64).map(i => (i - 19) / 32.768);
+  types.forEach(([key, name, col]) => {
+    const idx = U.map((u, i) => i).filter(i => U[i].type === key && WAVE[i * 64 + 19] > 0);
+    const m = { t: 30, r: 6, b: 30, l: 30 };
+    const L = layered(box.append('div').node(), pw, ph);
+    const x = d3.scaleLinear([t[0], t[63]], [m.l, pw - m.r]), y = d3.scaleLinear([-1.1, 1.1], [ph - m.b, m.t]);
+    const ctx = L.ctx, [r, g, b] = rgbOf(col);
+    ctx.strokeStyle = `rgba(${r},${g},${b},${idx.length > 300 ? 0.045 : 0.2})`; ctx.lineWidth = 1;
+    idx.forEach(i => { ctx.beginPath(); for (let s = 0; s < 64; s++) { const X = x(t[s]), Y = y(WAVE[i * 64 + s] / 127); s ? ctx.lineTo(X, Y) : ctx.moveTo(X, Y); } ctx.stroke(); });
+    const med = d3.range(64).map(s => d3.median(idx, i => WAVE[i * 64 + s] / 127));
+    const svg = L.svg, gg = svg.append('g');
+    gg.append('g').attr('class', 'grid').selectAll('line').data([-1, 0, 1]).join('line').attr('x1', m.l).attr('x2', pw - m.r).attr('y1', d => y(d)).attr('y2', d => y(d)).lower();
+    gg.append('g').attr('class', 'ax').attr('transform', `translate(${m.l},0)`).call(d3.axisLeft(y).tickValues([-1, 0, 1]).tickSize(0).tickPadding(5)).call(s => s.select('.domain').remove());
+    gg.append('g').attr('class', 'ax').attr('transform', `translate(0,${ph - m.b})`).call(d3.axisBottom(x).tickValues([-.5, 0, .5, 1]).tickSize(4));
+    svg.append('path').attr('d', d3.line().x((d, i) => x(t[i])).y(d => y(d))(med)).style('fill', 'none').style('stroke', 'var(--ink)').style('stroke-width', 2);
+    svg.append('text').attr('class', 'ptitle').attr('x', m.l).attr('y', 13).text(name);
+    svg.append('text').attr('class', 'psub').attr('x', m.l).attr('y', 25).text(`n = ${fmt(idx.length)}`);
+    svg.append('text').attr('class', 'psub').attr('x', pw - m.r).attr('y', ph - 2).attr('text-anchor', 'end').text('ms from peak');
+  });
+  const mw = t => d3.median(U.filter(u => u.type === t), u => u.width);
+  const neg = U.filter(u => u.type === 'negative-peak').length;
+  take('waveforms', `The median peak-to-trough width is <b>${f2(mw('interneuron'))} ms</b> for interneurons and <b>${f2(mw('pyramidal'))} ms</b> for pyramidal cells. Multi-unit shapes are an average over several neurons, so they look like a blurred pyramidal spike. Not shown: ${neg} single units with an inverted (negative) peak, which have no cell-type label.`);
+};
+
+R.width = el => {
+  const su = U.filter(u => u.type === 'pyramidal' || u.type === 'interneuron');
+  const ks = d3.range(4, 52);
+  const cnt = ks.map(k => ({ k, w: k / 32.768, pyr: su.filter(u => u.type === 'pyramidal' && Math.round(u.width * 32.768) === k).length,
+    int: su.filter(u => u.type === 'interneuron' && Math.round(u.width * 32.768) === k).length }));
+  const m = { t: 12, r: 10, b: 40, l: 44 };
+  const c = svgFor(el, W(el), 280, m);
+  const x = d3.scaleLinear([ks[0] / 32.768, (ks[ks.length - 1] + 1) / 32.768], [0, c.w]);
+  const y = d3.scaleLinear([0, d3.max(cnt, d => d.pyr + d.int)], [c.h, 0]).nice();
+  gridY(c.g, y, c.w, 4); axisLeft(c.g, y, { ticks: 4 });
+  axisBottom(c.g, x, c.h, { ticks: 8, format: d3.format('.1f') });
+  const bw = Math.max(1, x(1 / 32.768) - x(0) - 1.5);
+  cnt.forEach(d => {
+    const x0 = x(d.w - .5 / 32.768) + .75;
+    if (d.int) c.g.append('path').attr('d', d.pyr ? `M${x0},${y(0)}V${y(d.int)}H${x0 + bw}V${y(0)}Z` : colTop(x0, y(0), bw, y(d.int), 2)).style('fill', 'var(--int)');
+    if (d.pyr) c.g.append('path').attr('d', colTop(x0, y(d.int) - (d.int ? 2 : 0), bw, y(d.int + d.pyr), 2)).style('fill', 'var(--su)');
+    c.g.append('rect').attr('x', x0 - .75).attr('width', bw + 1.5).attr('y', 0).attr('height', c.h).attr('fill', 'transparent')
+      .on('mousemove', ev => showTip(ev, `<div class="t">Width ${f2(d.w)} ms</div>${trow('var(--su)', 'Pyramidal', d.pyr)}${trow('var(--int)', 'Interneuron', d.int)}`))
+      .on('mouseleave', hideTip);
+  });
+  const tx = x(0.65);
+  c.g.append('line').attr('class', 'rule').attr('x1', tx).attr('x2', tx).attr('y1', 0).attr('y2', c.h);
+  c.g.append('text').attr('class', 'vlabel').attr('x', tx + 5).attr('y', 10).text('0.65 ms threshold');
+  label(c.svg, m.l + c.w / 2, m.t + c.h + 36, 'Peak-to-trough width (ms)');
+  label(c.svg, 12, m.t + c.h / 2, 'Single units', 'axlabel', 'middle', true);
+  const nInt = su.filter(u => u.type === 'interneuron').length;
+  take('width', `Most spikes are wide: <b>${fmt(su.length - nInt)}</b> putative pyramidal cells vs <b>${nInt}</b> putative interneurons (${pct1(nInt / su.length)} of classified single units). The width distribution isn't clearly two-humped, so the 0.65 ms cut is a convention rather than a natural gap. Treat cell-type labels as approximate.`);
+};
+
+R.perwire = el => {
+  const pw = DATA.per_wire.map((v, k) => ({ k, v })).filter(d => d.k > 0);
+  const m = { t: 18, r: 10, b: 40, l: 44 };
+  const c = svgFor(el, Math.min(W(el), 640), 230, m);
+  const x = d3.scaleBand(pw.map(d => d.k), [0, c.w]).padding(.3), y = d3.scaleLinear([0, d3.max(pw, d => d.v)], [c.h, 0]).nice();
+  gridY(c.g, y, c.w, 4); axisLeft(c.g, y, { ticks: 4 });
+  axisBottom(c.g, x, c.h).call(s => s.select('.domain').remove());
+  const bw = Math.min(24, x.bandwidth());
+  pw.forEach(d => {
+    const x0 = x(d.k) + (x.bandwidth() - bw) / 2;
+    c.g.append('path').attr('d', colTop(x0, c.h, bw, y(d.v))).style('fill', 'var(--accent)');
+    c.g.append('text').attr('class', 'vlabel').attr('x', x0 + bw / 2).attr('y', y(d.v) - 5).attr('text-anchor', 'middle').text(d.v);
+  });
+  label(c.svg, m.l + c.w / 2, m.t + c.h + 36, 'Neurons found on the wire');
+  label(c.svg, 12, m.t + c.h / 2, 'Wires', 'axlabel', 'middle', true);
+  const tot = d3.sum(pw, d => d.v), multi = d3.sum(pw.filter(d => d.k > 1), d => d.v);
+  take('perwire', `On average <b>${f2(DATA.meta.n_units / DATA.meta.n_wires)}</b> neurons per wire, the same as the paper. ${pct(multi / tot)} of wires yield two or more neurons.`);
+};
+
+R.barcode = el => {
+  const labels = DATA.labels, cols = DATA.barcode.cols, width = W(el);
+  const cats = ['Characters', 'Faces', 'Character-related', 'Speech', 'Locations', 'Transitions', 'Interposed film'];
+  const narrow = width < 640;
+  const lw = narrow ? 118 : 170, rw = narrow ? 70 : 128, rowH = 11, headH = 22, top = 24, bottom = 26;
+  const rows = [];
+  let yy = top;
+  cats.forEach(cat => {
+    const ls = labels.map((l, i) => ({ ...l, i })).filter(l => l.cat === cat).sort((a, b) => b.pct - a.pct);
+    rows.push({ head: cat, y: yy }); yy += headH;
+    ls.forEach(l => { rows.push({ l, y: yy }); yy += rowH; });
+  });
+  const H = yy + bottom, px0 = lw, px1 = width - rw - 10, pwid = px1 - px0;
+  const L = layered(el, width, H), ctx = L.ctx;
+  const T = DATA.meta.movie_s, x = d3.scaleLinear([0, T], [px0, px1]);
+  const [ar, ag, ab] = rgbOf('--accent'), gridc = cssv('--zero'), ink = cssv('--ink'), ink2 = cssv('--ink2'), muted = cssv('--muted');
+  const nPix = Math.max(1, Math.floor(pwid));
+  rows.forEach(r => {
+    if (r.head) {
+      ctx.fillStyle = cssv('--accent'); ctx.font = '500 11px ' + cssv('--mono');
+      ctx.fillText(r.head.toUpperCase(), 0, r.y + headH - 7);
+      return;
+    }
+    const l = r.l, isEvent = l.name === 'camera-cuts' || l.name === 'scenes';
+    ctx.fillStyle = gridc; ctx.fillRect(px0, r.y + 1, pwid, rowH - 2);
+    const off = l.i * cols;
+    for (let p = 0; p < nPix; p++) {
+      const c0 = Math.floor(p / nPix * cols), c1 = Math.max(c0 + 1, Math.floor((p + 1) / nPix * cols));
+      let s = 0, mx = 0;
+      for (let k = c0; k < c1; k++) { const v = BARCODE[off + k]; s += v; if (v > mx) mx = v; }
+      const v = isEvent ? (mx > 0 ? 1 : 0) : s / (c1 - c0) / 255;
+      if (v > 0.01) { ctx.fillStyle = `rgba(${ar},${ag},${ab},${isEvent ? 0.9 : Math.max(0.12, v)})`; ctx.fillRect(px0 + p, r.y + 1, 1, rowH - 2); }
+    }
+    ctx.fillStyle = ink; ctx.font = `12px ${cssv('--sans')}`;
+    ctx.fillText(pretty(l.name), 0, r.y + rowH - 2, lw - 8);
+    const bx = px1 + 10, bmax = rw - 50;
+    ctx.fillStyle = `rgba(${ar},${ag},${ab},0.85)`; ctx.fillRect(bx, r.y + 2, Math.max(1, l.pct / 100 * bmax), rowH - 4);
+    ctx.fillStyle = ink2; ctx.font = `11px ${cssv('--mono')}`; ctx.textAlign = 'right';
+    ctx.fillText(l.pct < 1 ? f2(l.pct) + '%' : f1(l.pct) + '%', width, r.y + rowH - 2); ctx.textAlign = 'left';
+  });
+  // credits shading
+  ctx.fillStyle = cssv('--shade');
+  ctx.fillRect(x(0), top, x(DATA.meta.t0) - x(0), yy - top);
+  ctx.fillRect(x(DATA.meta.t1), top, x(T) - x(DATA.meta.t1), yy - top);
+  const svg = L.svg;
+  const ax = d3.axisTop(x).tickValues(d3.range(0, T, 600)).tickFormat(v => v / 60 + ' min').tickSize(4);
+  svg.append('g').attr('class', 'ax').attr('transform', `translate(0,${top - 2})`).call(ax).call(s => s.select('.domain').remove());
+  svg.append('g').attr('class', 'ax').attr('transform', `translate(0,${yy + 2})`).call(d3.axisBottom(x).tickValues(d3.range(0, T, 600)).tickFormat(v => v / 60).tickSize(4)).call(s => s.select('.domain').remove());
+  svg.append('text').attr('class', 'psub').attr('x', px1 + 10).attr('y', 12).text('% of frames');
+  svg.append('rect').attr('width', width).attr('height', H).attr('fill', 'transparent')
+    .on('mousemove', ev => {
+      const [mx, my] = d3.pointer(ev), r = rows.find(r => !r.head && my >= r.y && my < r.y + rowH);
+      if (!r) return hideTip();
+      const l = r.l, t = x.invert(Math.max(px0, Math.min(px1 - 1, mx))), ci = Math.floor(t);
+      const here = BARCODE[l.i * cols + Math.min(cols - 1, ci)] / 255;
+      showTip(ev, `<div class="t">${pretty(l.name)}</div><div class="m">${l.cat} · ${f2(l.pct)}% of frames · ${fmt(l.onsets)} onsets</div>
+        <div class="m">${l.name === 'camera-cuts' || l.name === 'scenes' ? fmt(l.onsets) + ' single-frame events' : 'total ' + f1(l.seconds / 60) + ' min on screen'}</div>
+        ${mx >= px0 && mx <= px1 ? `<div class="m" style="margin-top:4px">at ${mmss(t)}: ${here > 0 ? 'present' + (here < 1 ? ` (${pct(here)} of that second)` : '') : 'absent'}${t < DATA.meta.t0 || t > DATA.meta.t1 ? ' · credits' : ''}</div>` : ''}`);
+    }).on('mouseleave', hideTip);
+  const locs = labels.filter(l => l.cat === 'Locations' && l.name !== 'indoor-setting');
+  take('barcode', `Labels are very <b>unbalanced</b>. Tom is on screen in ${f1(labels.find(l => l.name === 'tom').pct)}% of frames and Summer in ${f1(labels.find(l => l.name === 'summer').pct)}%, but ${labels.filter(l => l.pct < 2).length} labels cover less than 2% of the movie. Half of the ${locs.length} specific locations appear in ${d3.median(locs, l => l.onsets)} or fewer separate stretches, and ${locs.filter(l => l.onsets === 1).length} appear only once. So a location label mostly identifies a stretch of the movie, and a decoder could learn "which part of the movie is this" rather than the location itself. Only the main characters, indoor/outdoor, speech and cuts recur throughout, which is why the paper decodes those.`);
+};
+
+R.shots = el => {
+  const width = W(el), cols = width > 520 ? 2 : 1, gap = 16, pw = (width - gap * (cols - 1)) / cols;
+  const box = d3.select(el).append('div').attr('class', 'multiples').style('grid-template-columns', `repeat(${cols}, 1fr)`);
+  [['Shot length (between camera cuts)', DATA.shots], ['Scene length (between scene cuts)', DATA.scene_lengths]].forEach(([name, vals]) => {
+    const m = { t: 36, r: 12, b: 36, l: 34 };
+    const c = svgFor(box.append('div').node(), pw, 230, m);
+    const lv = vals.filter(v => v > 0).map(v => Math.log10(v));
+    const x = d3.scaleLinear([-1.5, 3], [0, c.w]);
+    const h = d3.bin().domain([-1.5, 3]).thresholds(d3.range(-1.5, 3.001, .125))(lv);
+    const y = d3.scaleLinear([0, d3.max(h, b => b.length)], [c.h, 0]).nice();
+    gridY(c.g, y, c.w, 3); axisLeft(c.g, y, { ticks: 3 });
+    axisBottom(c.g, x, c.h, { values: [-1, 0, 1, 2, 3], format: v => ({ '-1': '0.1 s', '0': '1 s', '1': '10 s', '2': '100 s', '3': '1000 s' })[v] });
+    label(c.svg, m.l, 12, name, 'ptitle', 'start');
+    label(c.svg, m.l, 24, `n = ${vals.length} · median ${f1(d3.median(vals))} s`, 'psub', 'start');
+    h.forEach(b => {
+      if (!b.length) return;
+      const x0 = x(b.x0) + .5, x1 = x(b.x1) - 1;
+      c.g.append('path').attr('d', colTop(x0, c.h, x1 - x0, y(b.length), 2)).style('fill', 'var(--accent)')
+        .on('mousemove', ev => showTip(ev, `<div class="t">${f1(10 ** b.x0)}–${f1(10 ** b.x1)} s</div><div class="m">${b.length} ${name.startsWith('Shot') ? 'shots' : 'scenes'}</div>`))
+        .on('mouseleave', hideTip);
+    });
+    const mx = x(Math.log10(d3.median(vals)));
+    c.g.append('line').attr('class', 'rule').attr('x1', mx).attr('x2', mx).attr('y1', 0).attr('y2', c.h);
+  });
+  take('shots', `The camera cuts every <b>${f1(d3.median(DATA.shots))} s</b> on median, and ${pct(DATA.shots.filter(v => v < 1).length / DATA.shots.length)} of shots last under a second. Because cuts come so often, "responses" to other features can overlap with responses to cuts: a new character very often appears right on a cut.`);
+};
+
+R.cooc = el => {
+  const { names, phi } = DATA.cooc, n = names.length;
+  const m = { t: 8, r: 8, b: 8, l: 150 };
+  const cell = Math.max(20, Math.min(34, (W(el) - m.l - m.r) / n));
+  const c = svgFor(el, m.l + cell * n + m.r, m.t + cell * n + 120, m);
+  const L = lut('--div-neg', '--div-pos', '--div-mid');
+  for (let i = 0; i < n; i++) {
+    c.svg.append('text').attr('class', 'axlabel').attr('x', m.l - 8).attr('y', m.t + i * cell + cell / 2 + 4).attr('text-anchor', 'end').text(pretty(names[i]));
+    for (let j = 0; j < i; j++) {
+      const v = phi[i][j], col = L[Math.round((v + 1) / 2 * 255)];
+      c.g.append('rect').attr('x', j * cell + 1).attr('y', i * cell + 1).attr('width', cell - 2).attr('height', cell - 2).attr('rx', 3).style('fill', `rgb(${col})`)
+        .on('mousemove', ev => showTip(ev, `<div class="t">${pretty(names[i])} × ${pretty(names[j])}</div><div class="m">φ = ${f2(v)}</div>`))
+        .on('mouseleave', hideTip);
+      if (Math.abs(v) >= .3 && cell >= 24) c.g.append('text').attr('x', j * cell + cell / 2).attr('y', i * cell + cell / 2 + 3.5).attr('text-anchor', 'middle')
+        .style('font', '9.5px var(--mono)').style('pointer-events', 'none').style('fill', lum(col) > .55 ? 'var(--ink)' : '#fff').text(f2(v).replace('0.', '.'));
+    }
+  }
+  for (let j = 0; j < n - 1; j++) c.g.append('text').attr('class', 'axlabel').attr('transform', `translate(${j * cell + cell / 2 + 4},${n * cell + 6}) rotate(45)`).text(pretty(names[j]));
+  const g = c.svg.append('g').attr('transform', `translate(${m.l + cell * n - 150},${m.t + 14})`);
+  const grad = d3.range(0, 1.0001, .05);
+  grad.forEach((t, i) => g.append('rect').attr('x', i * 7).attr('y', 0).attr('width', 7).attr('height', 8).style('fill', `rgb(${L[Math.round(t * 255)]})`));
+  g.append('text').attr('class', 'psub').attr('x', 0).attr('y', 22).text('−1');
+  g.append('text').attr('class', 'psub').attr('x', grad.length * 3.5).attr('y', 22).attr('text-anchor', 'middle').text('0');
+  g.append('text').attr('class', 'psub').attr('x', grad.length * 7).attr('y', 22).attr('text-anchor', 'end').text('+1');
+  const get = (a, b) => phi[names.indexOf(a)][names.indexOf(b)];
+  take('cooc', `Face labels mostly just re-state the character labels (Summer × Summer faces φ = ${f2(get('summer', 'summer-faces'))}), and "Summer presence" is almost the same as "Summer" (φ = ${f2(get('summer', 'summer-presence'))}). Tom and Summer only weakly co-occur (φ = ${f2(get('tom', 'summer'))}). Locations follow from the indoor label (Office × Indoor φ = ${f2(get('office', 'indoor-setting'))}). A decoder that seems to find "Summer" might be picking up a related label such as her faces, speech or usual settings.`);
+};
+
+R.raster = el => {
+  const sel = document.getElementById('raster-patient');
+  if (!sel.options.length) {
+    DATA.patients.forEach(p => { const o = document.createElement('option'); o.value = p.id; o.textContent = `P${p.id} · ${p.units} neurons`; sel.appendChild(o); });
+    sel.value = '10';
+    sel.onchange = () => renderOne('raster');
+  }
+  const pid = sel.value, rp = DATA.raster.patients[pid], spikes = decode(rp.spikes, Uint16Array);
+  const ids = rp.units, n = ids.length, width = W(el);
+  const t0 = DATA.raster.t0, dur = DATA.raster.t1 - t0;
+  const lw = 118, rowH = Math.max(3, Math.min(7, Math.floor(520 / n))), rasterH = n * rowH;
+  const tracks = [['summer', 'Summer'], ['tom', 'Tom'], ['summer-speaking', 'Summer speaks'], ['tom-speaking', 'Tom speaks'], ['indoor-setting', 'Indoor'], ['scenes', 'Scene cuts'], ['camera-cuts', 'Camera cuts']];
+  const trH = 13, gapT = 14, top = 6, H = top + rasterH + gapT + tracks.length * trH + 30;
+  const L = layered(el, width, H), ctx = L.ctx, x = d3.scaleLinear([0, dur], [lw, width - 8]);
+  const cols = GVAR.map(v => cssv(v));
+  let spk = 0;
+  ids.forEach((u, r) => {
+    const g = unitGroup[u], y = top + r * rowH;
+    ctx.fillStyle = cols[g]; ctx.fillRect(lw - 10, y, 6, rowH);
+    ctx.globalAlpha = .9;
+    for (let s = rp.offsets[r]; s < rp.offsets[r + 1]; s++) { ctx.fillRect(Math.round(x(spikes[s] / 200)), y + (rowH > 4 ? .5 : 0), 1, Math.max(1, rowH - (rowH > 4 ? 1 : 0))); spk++; }
+    ctx.globalAlpha = 1;
+  });
+  const [ar, ag, ab] = rgbOf('--accent'), zero = cssv('--zero'), ink = cssv('--ink2');
+  const ty0 = top + rasterH + gapT;
+  tracks.forEach(([key, name], k) => {
+    const y = ty0 + k * trH, tr = DATA.raster_tracks[key];
+    ctx.fillStyle = zero; ctx.fillRect(lw, y + 1, width - 8 - lw, trH - 3);
+    ctx.fillStyle = `rgba(${ar},${ag},${ab},.8)`;
+    if (tr.spans) tr.spans.forEach(([a, b]) => ctx.fillRect(x(a), y + 1, Math.max(1, x(b) - x(a)), trH - 3));
+    else tr.points.forEach(p => ctx.fillRect(Math.round(x(p)), y, 1.5, trH - 1));
+    ctx.fillStyle = ink; ctx.font = `11px ${cssv('--sans')}`; ctx.textAlign = 'right'; ctx.fillText(name, lw - 8, y + trH - 3); ctx.textAlign = 'left';
+  });
+  // group labels
+  let start = 0;
+  for (let r = 1; r <= n; r++) {
+    if (r === n || unitGroup[ids[r]] !== unitGroup[ids[start]]) {
+      const cnt = r - start;
+      if (cnt * rowH >= 14) { ctx.fillStyle = ink; ctx.font = `11px ${cssv('--sans')}`; ctx.textAlign = 'right'; ctx.fillText(G[unitGroup[ids[start]]].replace(' cx', ''), lw - 16, top + (start + cnt / 2) * rowH + 4, lw - 18); ctx.textAlign = 'left'; }
+      start = r;
+    }
+  }
+  L.svg.append('g').attr('class', 'ax').attr('transform', `translate(0,${ty0 + tracks.length * trH + 2})`)
+    .call(d3.axisBottom(x).tickValues(d3.range(0, dur + 1, 30)).tickFormat(v => mmss(t0 + v)).tickSize(4)).call(s => s.select('.domain').remove());
+  L.svg.append('rect').attr('x', lw).attr('width', width - lw).attr('height', H).attr('fill', 'transparent')
+    .on('mousemove', ev => {
+      const [mx, my] = d3.pointer(ev), r = Math.floor((my - top) / rowH), t = x.invert(mx);
+      if (r >= 0 && r < n) {
+        const u = U[ids[r]], cntr = rp.offsets[r + 1] - rp.offsets[r];
+        showTip(ev, `<div class="t">${DATA.meta.region_names[u.region]} (${u.hemi})</div><div class="m">${u.su ? 'single unit · ' + u.type : 'multi-unit'} · wire ${u.csc}</div>
+          <div class="m">${f2(u.rate)} Hz over the movie · ${cntr} spikes in this window</div><div class="m">at ${mmss(t0 + t)}</div>`);
+      } else showTip(ev, `<div class="m">movie time ${mmss(t0 + t)}</div>`);
+    }).on('mouseleave', hideTip);
+  document.getElementById('raster-info').textContent = `${n} neurons · ${fmt(spk)} spikes in these 3 minutes`;
+  const counts = ids.map((u, r) => rp.offsets[r + 1] - rp.offsets[r]).sort((a, b) => b - a);
+  const topShare = d3.sum(counts.slice(0, Math.ceil(n / 10))) / Math.max(1, spk);
+  take('raster', `In this window, the busiest 10% of P${pid}'s neurons fire <b>${pct(topShare)}</b> of all spikes. Most rows are sparse, irregular ticks. Movie-related structure is hard to see by eye in single trials; it only shows up reliably after averaging over many events (section 7) or pooling many neurons.`);
+};
+
+R.heat = el => {
+  const { cols, order } = DATA.heat, n = order.length, width = W(el);
+  const lw = 118, plotH = 560, stripH = 12, strips = [['summer', 'Summer'], ['tom', 'Tom'], ['indoor-setting', 'Indoor'], ['days-of-summer', 'Day cards']];
+  const H = plotH + 10 + strips.length * (stripH + 2) + 30;
+  const L = layered(el, width, H), ctx = L.ctx, dpr = L.dpr;
+  const px0 = lw, pw = width - lw - 8;
+  const LUT = lut('--div-neg', '--div-pos', '--div-mid');
+  const hpx = Math.round(plotH * dpr);
+  const off = document.createElement('canvas'); off.width = cols; off.height = hpx;
+  const octx = off.getContext('2d'), img = octx.createImageData(cols, hpx);
+  const sum = new Float32Array(cols), rowsPer = n / hpx;
+  for (let py = 0; py < hpx; py++) {
+    const r0 = Math.floor(py * rowsPer), r1 = Math.max(r0 + 1, Math.floor((py + 1) * rowsPer));
+    sum.fill(0);
+    for (let r = r0; r < r1; r++) for (let cI = 0; cI < cols; cI++) sum[cI] += HEAT[r * cols + cI];
+    for (let cI = 0; cI < cols; cI++) {
+      const z = sum[cI] / (r1 - r0) / 40, t = Math.max(0, Math.min(255, Math.round((z / 2.5 + 1) / 2 * 255))), col = LUT[t], o = (py * cols + cI) * 4;
+      img.data[o] = col[0]; img.data[o + 1] = col[1]; img.data[o + 2] = col[2]; img.data[o + 3] = 255;
+    }
+  }
+  octx.putImageData(img, 0, 0);
+  ctx.imageSmoothingEnabled = false;
+  ctx.save(); ctx.setTransform(1, 0, 0, 1, 0, 0);
+  ctx.drawImage(off, 0, 0, cols, hpx, Math.round(px0 * dpr), 0, Math.round(pw * dpr), hpx);
+  ctx.restore();
+  // group strip + labels
+  const gcols = GVAR.map(v => cssv(v)), ink = cssv('--ink2');
+  let s0 = 0;
+  for (let r = 1; r <= n; r++) {
+    if (r === n || unitGroup[order[r]] !== unitGroup[order[s0]]) {
+      const gi = unitGroup[order[s0]], y0 = s0 / n * plotH, y1 = r / n * plotH;
+      ctx.fillStyle = gcols[gi]; ctx.fillRect(lw - 10, y0, 6, y1 - y0 - (r < n ? 1 : 0));
+      ctx.fillStyle = ink; ctx.font = `11px ${cssv('--sans')}`; ctx.textAlign = 'right';
+      if (y1 - y0 > 14) ctx.fillText(G[gi].replace(' cx', ''), lw - 16, (y0 + y1) / 2 + 4, lw - 18);
+      ctx.fillStyle = cssv('--surface'); if (r < n) ctx.fillRect(px0, y1 - .5, pw, 1);
+      ctx.textAlign = 'left';
+      s0 = r;
+    }
+  }
+  const [ar, ag, ab] = rgbOf('--accent'), zero = cssv('--zero'), bcols = DATA.barcode.cols, bin = DATA.heat.bin;
+  const t0 = DATA.meta.t0, x = d3.scaleLinear([t0, t0 + cols * bin], [px0, px0 + pw]);
+  strips.forEach(([key, name], k) => {
+    const y = plotH + 10 + k * (stripH + 2), li = DATA.labels.findIndex(l => l.name === key);
+    ctx.fillStyle = zero; ctx.fillRect(px0, y, pw, stripH);
+    for (let cI = 0; cI < cols; cI++) {
+      let s = 0; const a = Math.floor(t0 + cI * bin);
+      for (let q = a; q < a + bin && q < bcols; q++) s += BARCODE[li * bcols + q];
+      const v = s / bin / 255;
+      if (v > .02) { ctx.fillStyle = `rgba(${ar},${ag},${ab},${Math.max(.15, v)})`; ctx.fillRect(x(t0 + cI * bin), y, Math.ceil(pw / cols), stripH); }
+    }
+    ctx.fillStyle = ink; ctx.font = `11px ${cssv('--sans')}`; ctx.textAlign = 'right'; ctx.fillText(name, lw - 8, y + stripH - 2); ctx.textAlign = 'left';
+  });
+  L.svg.append('g').attr('class', 'ax').attr('transform', `translate(0,${plotH + 10 + strips.length * (stripH + 2)})`)
+    .call(d3.axisBottom(x).tickValues(d3.range(600, t0 + cols * bin, 600)).tickFormat(v => v / 60 + ' min').tickSize(4)).call(s => s.select('.domain').remove());
+  L.svg.append('rect').attr('x', px0).attr('width', pw).attr('height', plotH).attr('fill', 'transparent')
+    .on('mousemove', ev => {
+      const [mx, my] = d3.pointer(ev), r = Math.min(n - 1, Math.floor(my / plotH * n)), cI = Math.min(cols - 1, Math.floor((mx - px0) / pw * cols));
+      const u = U[order[r]], z = HEAT[r * cols + cI] / 40;
+      showTip(ev, `<div class="t">Patient ${u.p} · ${DATA.meta.region_names[u.region]}</div><div class="m">${u.su ? 'single unit' : 'multi-unit'} · ${f2(u.rate)} Hz</div>
+        <div class="m">${mmss(t0 + cI * bin)}–${mmss(t0 + (cI + 1) * bin)}: z = ${f1(z)}</div><div class="m" style="opacity:.75">(pixel rows average ~${Math.round(n / plotH)} neurons)</div>`);
+    }).on('mouseleave', hideTip);
+  const dr = DATA.drift;
+  take('heat', `At this scale, most of what you see is spike-count noise, with no obvious movie-wide pattern. Underneath it there is real <b>slow drift</b>. Among the ${fmt(dr.n)} neurons firing at least 0.5 Hz, <b>${pct(dr.up15 + dr.down15)}</b> change their rate by more than 1.5× between the first and last fifth of the movie (${pct(dr.down15)} slow down, ${pct(dr.up15)} speed up), and ${pct(dr.x2)} change by more than 2×. Changes slower than ~5 minutes account for a median ${pct(dr.slow_var)} of each neuron's variance in 10-s counts; a steady-rate neuron would show about 3%. A model tested on a different part of the movie than it was trained on has to cope with this drift, and a model tested next to its training data can exploit it.`);
+};
+
+R.isc = el => {
+  const D = DATA.isc.slice().sort((a, b) => b.r - a.r);
+  const m = { t: 10, r: 20, b: 40, l: 90 }, rowH = 17;
+  const c = svgFor(el, Math.min(W(el), 760), D.length * rowH + m.t + m.b, m);
+  const x = d3.scaleLinear([Math.min(-0.06, d3.min(D, d => d.lo)), Math.max(0.2, d3.max(D, d => d.r))], [0, c.w]).nice();
+  const y = d3.scaleBand(D.map(d => d.p), [0, c.h]).padding(.2);
+  c.g.append('g').attr('class', 'grid').selectAll('line').data(x.ticks(6)).join('line').attr('x1', d => x(d)).attr('x2', d => x(d)).attr('y1', 0).attr('y2', c.h);
+  c.g.append('line').attr('x1', x(0)).attr('x2', x(0)).attr('y1', 0).attr('y2', c.h).style('stroke', 'var(--axis)');
+  axisBottom(c.g, x, c.h, { ticks: 6, format: d3.format('.2f') }).call(s => s.select('.domain').remove());
+  D.forEach(d => {
+    const cy = y(d.p) + y.bandwidth() / 2, sig = d.r > d.hi;
+    c.g.append('rect').attr('x', x(d.lo)).attr('width', x(d.hi) - x(d.lo)).attr('y', cy - 3).attr('height', 6).attr('rx', 3).style('fill', 'var(--grid)');
+    c.g.append('circle').attr('cx', x(d.r)).attr('cy', cy).attr('r', 4.5).style('fill', sig ? 'var(--accent)' : 'var(--surface)').style('stroke', sig ? 'var(--surface)' : 'var(--accent)').style('stroke-width', sig ? 2 : 1.5);
+    c.svg.append('text').attr('class', 'psub').attr('x', m.l - 10).attr('y', m.t + cy + 4).attr('text-anchor', 'end').text(`P${d.p} · ${d.n}n`);
+    c.g.append('rect').attr('x', -m.l).attr('width', c.w + m.l).attr('y', y(d.p)).attr('height', y.bandwidth()).attr('fill', 'transparent')
+      .on('mousemove', ev => showTip(ev, `<div class="t">Patient ${d.p}</div><div class="m">r = ${f3(d.r)} with the other 28 patients</div><div class="m">chance range ${f3(d.lo)} to ${f3(d.hi)}</div><div class="m">${d.n} neurons (≥0.1 Hz)</div>`))
+      .on('mouseleave', hideTip);
+  });
+  label(c.svg, m.l + c.w / 2, m.t + c.h + 34, 'Correlation with the average of all other patients (r)');
+  const nsig = D.filter(d => d.r > d.hi).length;
+  take('isc', `<b>${nsig} of ${D.length}</b> patients are more in sync with the group than chance, but the effect is small (median r = ${f3(d3.median(D, d => d.r))}). The movie does drive some shared activity across brains. Still, most of the moment-to-moment variation in a patient's population activity is their own, which fits the paper's advice to pool neurons across patients into a pseudo-population.`);
+};
+
+R.psth = el => {
+  const E = DATA.psth.events, names = Object.keys(E), edges = DATA.psth.edges, width = W(el);
+  const cols = width > 1000 ? 4 : width > 560 ? 2 : 1, gap = 14, pw = (width - gap * (cols - 1)) / cols;
+  const box = d3.select(el).append('div').attr('class', 'multiples').style('grid-template-columns', `repeat(${cols}, 1fr)`);
+  const shown = G.filter(g => !hidden.psth.has(g));
+  const centers = edges.slice(0, -1).map((e, i) => (e + edges[i + 1]) / 2);
+  names.forEach(nm => {
+    const all = shown.flatMap(g => E[nm].groups[g].mean.flatMap((v, i) => [v - E[nm].groups[g].sem[i], v + E[nm].groups[g].sem[i]])).filter(Number.isFinite);
+    const yd = all.length ? [Math.min(.9, d3.min(all)), Math.max(1.1, d3.max(all))] : [.9, 1.1];
+    const m = { t: 30, r: 8, b: 30, l: 40 };
+    const c = svgFor(box.append('div').node(), pw, 220, m);
+    const x = d3.scaleLinear([-1, 1], [0, c.w]), y = d3.scaleLinear(yd, [c.h, 0]).nice();
+    gridY(c.g, y, c.w, 4); axisLeft(c.g, y, { ticks: 4, format: v => f2(v) + '×' });
+    axisBottom(c.g, x, c.h, { values: [-1, -.5, 0, .5, 1], format: v => v + ' s' });
+    c.g.append('line').attr('x1', 0).attr('x2', c.w).attr('y1', y(1)).attr('y2', y(1)).style('stroke', 'var(--axis)');
+    c.g.append('line').attr('class', 'rule').attr('x1', x(0)).attr('x2', x(0)).attr('y1', 0).attr('y2', c.h);
+    label(c.svg, m.l, 13, nm, 'ptitle', 'start');
+    label(c.svg, m.l, 25, `${fmt(E[nm].n_events)} events`, 'psub', 'start');
+    shown.forEach(g => {
+      const s = E[nm].groups[g], gi = G.indexOf(g);
+      c.g.append('path').attr('d', d3.area().x((d, i) => x(centers[i])).y0((d, i) => y(s.mean[i] - s.sem[i])).y1((d, i) => y(s.mean[i] + s.sem[i]))(s.mean))
+        .style('fill', gcol(gi)).style('fill-opacity', .12);
+      c.g.append('path').attr('d', d3.line().x((d, i) => x(centers[i])).y(d => y(d))(s.mean)).style('fill', 'none').style('stroke', gcol(gi)).style('stroke-width', 2).style('stroke-linejoin', 'round');
+    });
+    const cross = c.g.append('line').attr('y1', 0).attr('y2', c.h).style('stroke', 'var(--ink2)').style('stroke-width', 1).style('opacity', 0);
+    c.g.append('rect').attr('width', c.w).attr('height', c.h).attr('fill', 'transparent')
+      .on('mousemove', ev => {
+        const i = Math.max(0, Math.min(centers.length - 1, Math.floor((x.invert(d3.pointer(ev)[0]) + 1) / 0.05)));
+        cross.attr('x1', x(centers[i])).attr('x2', x(centers[i])).style('opacity', .5);
+        showTip(ev, `<div class="t">${nm} · ${f2(edges[i])} to ${f2(edges[i + 1])} s</div>` + shown.map(g => trow(gcol(g), g, f2(E[nm].groups[g].mean[i]) + '×')).join(''));
+      }).on('mouseleave', () => { cross.style('opacity', 0); hideTip(); });
+  });
+  const phc = E['Scene cut'].groups['Parahippocampal cx'].mean, peak = d3.max(phc.slice(20, 30));
+  take('psth', `The clearest responses are to <b>visual changes</b>: scene cuts, day-counter cards, indoor/outdoor switches and camera cuts. They are strongest in parahippocampal cortex, where the rate peaks at <b>${f2(peak)}×</b> baseline within about 300 ms of a scene cut. That fits the paper's finding that parahippocampal cortex best encodes visual transitions. Amygdala and entorhinal neurons tend to <i>dip</i> briefly after a cut. When a speaker starts talking, activity changes little. The day-counter panel averages only 32 events, so it is noisier.`);
+};
+
+R.responsive = el => {
+  const Rsp = DATA.psth.responsive, events = Object.keys(Rsp), rows = [...G, 'All'];
+  const L = lut('--seq-lo', '--seq-hi'), s = d3.scaleSqrt([0, .2], [0, 255]).clamp(true);
+  const t = document.createElement('table'); t.className = 'matrix';
+  t.innerHTML = `<thead><tr><th></th>${events.map(e => `<th>${e}</th>`).join('')}</tr></thead><tbody>` +
+    rows.map(g => `<tr><td>${g === 'All' ? '<b>All regions</b>' : `<span class="sw" style="background:${gcol(g)};display:inline-block;margin-right:6px;vertical-align:-1px"></span>${g}`}</td>` +
+      events.map(e => {
+        const d = Rsp[e][g], p = d.n ? d.sig / d.n : 0, col = L[Math.round(s(p))];
+        return `<td style="background:rgb(${col});color:${lum(col) > .55 ? 'var(--ink)' : '#fff'}" title="${d.sig} of ${d.n} neurons; ${d.up} increase, ${d.sig - d.up} decrease">${pct(p)}<small>${d.sig}/${d.n}</small></td>`;
+      }).join('') + '</tr>').join('') + '</tbody>';
+  el.appendChild(t);
+  const phc = Rsp['Camera cut']['Parahippocampal cx'], all = Rsp['Camera cut'].All;
+  take('responsive', `Across all regions, <b>${pct1(all.sig / all.n)}</b> of neurons respond to camera cuts, about 5× the 1% expected by chance. In parahippocampal cortex it's <b>${pct(phc.sig / phc.n)}</b> (${phc.sig}/${phc.n}), close to the paper's 68/293 with ZETA. Character appearances bring fewer responders (${pct1(Rsp['Summer appears'].All.sig / Rsp['Summer appears'].All.n)} for Summer). Speech onsets bring the fewest, and many of those are <i>decreases</i> (hover a cell for the split).`);
+};
+
+R.cutheat = el => {
+  const { order, sig } = DATA.cut_heat, n = order.length, nb = 40, width = Math.min(W(el), 760);
+  const lw = 118, plotH = 520, px0 = lw, pw = width - lw - 24;
+  const H = plotH + 26;
+  const L = layered(el, width, H), ctx = L.ctx, dpr = L.dpr;
+  const LUT = lut('--div-neg', '--div-pos', '--div-mid');
+  const hpx = Math.round(plotH * dpr), off = document.createElement('canvas'); off.width = nb; off.height = hpx;
+  const octx = off.getContext('2d'), img = octx.createImageData(nb, hpx), rowsPer = n / hpx;
+  const sigFrac = new Float32Array(hpx);
+  for (let py = 0; py < hpx; py++) {
+    const r0 = Math.floor(py * rowsPer), r1 = Math.max(r0 + 1, Math.floor((py + 1) * rowsPer));
+    for (let b = 0; b < nb; b++) {
+      let s = 0; for (let r = r0; r < r1; r++) s += CUTHEAT[r * nb + b];
+      const v = s / (r1 - r0) / 63, t = Math.max(0, Math.min(255, Math.round((v / 1 + 1) / 2 * 255))), col = LUT[t], o = (py * nb + b) * 4;
+      img.data[o] = col[0]; img.data[o + 1] = col[1]; img.data[o + 2] = col[2]; img.data[o + 3] = 255;
+    }
+    let sg = 0; for (let r = r0; r < r1; r++) sg += sig[r]; sigFrac[py] = sg / (r1 - r0);
+  }
+  octx.putImageData(img, 0, 0);
+  ctx.imageSmoothingEnabled = false;
+  ctx.save(); ctx.setTransform(1, 0, 0, 1, 0, 0);
+  ctx.drawImage(off, 0, 0, nb, hpx, Math.round(px0 * dpr), 0, Math.round(pw * dpr), hpx);
+  const [ar, ag, ab] = rgbOf('--accent');
+  for (let py = 0; py < hpx; py++) if (sigFrac[py] > 0) { ctx.fillStyle = `rgba(${ar},${ag},${ab},${Math.min(1, .25 + sigFrac[py])})`; ctx.fillRect(Math.round((px0 + pw + 6) * dpr), py, Math.round(8 * dpr), 1); }
+  ctx.restore();
+  const gcols = GVAR.map(v => cssv(v)), ink = cssv('--ink2');
+  let s0 = 0;
+  for (let r = 1; r <= n; r++) {
+    if (r === n || unitGroup[order[r]] !== unitGroup[order[s0]]) {
+      const gi = unitGroup[order[s0]], y0 = s0 / n * plotH, y1 = r / n * plotH;
+      ctx.fillStyle = gcols[gi]; ctx.fillRect(lw - 10, y0, 6, y1 - y0 - (r < n ? 1 : 0));
+      ctx.fillStyle = ink; ctx.font = `11px ${cssv('--sans')}`; ctx.textAlign = 'right';
+      if (y1 - y0 > 14) ctx.fillText(G[gi].replace(' cx', ''), lw - 16, (y0 + y1) / 2 + 4, lw - 18);
+      ctx.textAlign = 'left';
+      ctx.fillStyle = cssv('--surface'); if (r < n) ctx.fillRect(px0, y1 - 1, pw, 2);
+      s0 = r;
+    }
+  }
+  const x = d3.scaleLinear([-1, 1], [px0, px0 + pw]);
+  ctx.fillStyle = cssv('--ink'); ctx.globalAlpha = .6; ctx.fillRect(Math.round(x(0)), 0, 1, plotH); ctx.globalAlpha = 1;
+  L.svg.append('g').attr('class', 'ax').attr('transform', `translate(0,${plotH + 2})`).call(d3.axisBottom(x).tickValues([-1, -.5, 0, .5, 1]).tickFormat(v => v + ' s').tickSize(4)).call(s => s.select('.domain').remove());
+  L.svg.append('rect').attr('x', px0).attr('width', pw + 20).attr('height', plotH).attr('fill', 'transparent')
+    .on('mousemove', ev => {
+      const [mx, my] = d3.pointer(ev), r = Math.min(n - 1, Math.floor(my / plotH * n)), b = Math.max(0, Math.min(nb - 1, Math.floor((mx - px0) / pw * nb)));
+      const u = U[order[r]], v = 2 ** (CUTHEAT[r * nb + b] / 63);
+      showTip(ev, `<div class="t">Patient ${u.p} · ${DATA.meta.region_names[u.region]}</div><div class="m">${u.su ? 'single unit' : 'multi-unit'} · ${f2(u.rate)} Hz${sig[r] ? ' · <b>responsive</b>' : ''}</div>
+        <div class="m">${f2(-1 + b * .05)} to ${f2(-1 + (b + 1) * .05)} s: ${f2(v)}× its pre-cut rate</div>`);
+    }).on('mouseleave', hideTip);
+  const cc = DATA.psth.responsive['Camera cut'].All;
+  take('cutheat', `Only a minority of neurons respond, and most rows are speckled noise around 1×. Of the <b>${cc.sig}</b> neurons flagged as responsive, ${cc.up} fire more after the cut and ${cc.sig - cc.up} fire less. The parahippocampal block has the densest cluster of significance marks. Sparse neurons can still look red or blue by chance, so rely on the significance marks rather than color alone.`);
+};
+
+R.sparsity = el => {
+  const S = DATA.sparsity, width = W(el), cols = width > 640 ? 2 : 1, gap = 20, pw = (width - gap * (cols - 1)) / cols;
+  const box = d3.select(el).append('div').attr('class', 'multiples').style('grid-template-columns', `repeat(${cols}, 1fr)`);
+  [['Bins with zero spikes', 'empty', d3.scaleLinear().domain([0, 1]), pct], ['Mean spikes per bin (log)', 'mean', d3.scaleLog().domain([0.002, 10]), d3.format('~g')]].forEach(([name, key, ys, yf]) => {
+    const m = { t: 26, r: 14, b: 40, l: 44 };
+    const c = svgFor(box.append('div').node(), pw, 260, m);
+    const x = d3.scaleBand(S.map(s => s.ms), [0, c.w]).padding(.4), y = ys.range([c.h, 0]);
+    const tv = key === 'mean' ? [0.01, 0.1, 1, 10] : [0, .25, .5, .75, 1];
+    gridY(c.g, y, c.w, 4, tv); axisLeft(c.g, y, { values: tv, format: yf });
+    axisBottom(c.g, x, c.h, { format: v => v + ' ms' }).call(s => s.select('.domain').remove());
+    label(c.svg, m.l, 14, name, 'ptitle', 'start');
+    label(c.svg, m.l + c.w / 2, m.t + c.h + 36, 'Bin size');
+    S.forEach(s => {
+      const q = s[key].map(v => Math.max(key === 'mean' ? 0.002 : 0, v)), cx = x(s.ms) + x.bandwidth() / 2;
+      c.g.append('line').attr('x1', cx).attr('x2', cx).attr('y1', y(q[0])).attr('y2', y(q[4])).style('stroke', 'var(--accent)').style('stroke-width', 1.5);
+      c.g.append('rect').attr('x', cx - 6).attr('width', 12).attr('y', y(q[3])).attr('height', Math.max(1, y(q[1]) - y(q[3]))).attr('rx', 3).style('fill', 'var(--accent-soft)');
+      c.g.append('circle').attr('cx', cx).attr('cy', y(q[2])).attr('r', 5).style('fill', 'var(--accent)').style('stroke', 'var(--surface)').style('stroke-width', 2);
+      c.g.append('text').attr('class', 'vlabel').attr('x', cx + 10).attr('y', y(q[2]) + 4).text(key === 'mean' ? d3.format('.2~f')(q[2]) : pct(q[2]));
+      c.g.append('rect').attr('x', x(s.ms) - 10).attr('width', x.bandwidth() + 20).attr('height', c.h).attr('fill', 'transparent')
+        .on('mousemove', ev => showTip(ev, `<div class="t">${s.ms} ms bins · ${fmt(s.bins)} bins in the analysis window</div>
+          <div class="m">median neuron: ${key === 'mean' ? f3(s[key][2]) + ' spikes/bin' : pct1(s[key][2]) + ' empty'}</div>
+          <div class="m">middle 50%: ${key === 'mean' ? f3(s[key][1]) + '–' + f3(s[key][3]) : pct(s[key][1]) + '–' + pct(s[key][3])}</div>`))
+        .on('mouseleave', hideTip);
+    });
+  });
+  const s40 = DATA.sparsity[0], s480 = DATA.sparsity[3];
+  take('sparsity', `At the frame rate (40 ms), the median neuron fires nothing in <b>${pct(s40.empty[2])}</b> of bins, so single-neuron inputs are almost all zeros. At 480 ms, ${pct(s480.empty[2])} of bins are still empty for the median neuron. With ${fmt(s40.bins)} samples at 40 ms but only ${fmt(s480.bins)} at 480 ms, you trade temporal resolution for less noisy counts. Pooling neurons across patients is the other way to get denser inputs.`);
+};
+
+let acfHi = null;
+R.acf = el => {
+  const A = DATA.acf, lags = A.lags, width = W(el), cols = width > 760 ? 2 : 1, gap = 24, pw = (width - gap * (cols - 1)) / cols;
+  const box = d3.select(el).append('div').attr('class', 'multiples').style('grid-template-columns', `repeat(${cols}, 1fr)`);
+  const x0 = 1;
+  // labels panel
+  {
+    const wrap = box.append('div');
+    const m = { t: 26, r: 16, b: 40, l: 40 };
+    const c = svgFor(wrap.node(), pw, 280, m);
+    const x = d3.scaleLinear([x0, 180], [0, c.w]), y = d3.scaleLinear([-0.1, 1], [c.h, 0]);
+    gridY(c.g, y, c.w, 5, [0, .25, .5, .75, 1]); axisLeft(c.g, y, { values: [0, .5, 1] });
+    axisBottom(c.g, x, c.h, { values: [1, 30, 60, 90, 120, 150, 180], format: v => v + ' s' });
+    c.g.append('line').attr('x1', 0).attr('x2', c.w).attr('y1', y(0)).attr('y2', y(0)).style('stroke', 'var(--axis)');
+    c.g.append('line').attr('class', 'rule-accent').attr('x1', x(32)).attr('x2', x(32)).attr('y1', 0).attr('y2', c.h);
+    c.g.append('text').attr('class', 'vlabel').attr('x', x(32) + 5).attr('y', 8).text('32 s buffer');
+    label(c.svg, m.l, 14, 'Movie labels', 'ptitle', 'start');
+    label(c.svg, m.l + c.w / 2, m.t + c.h + 36, 'Time shift (lag)');
+    const keys = Object.keys(A.labels).sort((a, b) => A.labels[b][32] - A.labels[a][32]);
+    const paths = {};
+    keys.forEach(k => {
+      paths[k] = c.g.append('path').attr('d', d3.line().x(d => x(d[0])).y(d => y(d[1]))(lags.slice(x0).map((l, i) => [l, A.labels[k][i + x0]])))
+        .style('fill', 'none').style('stroke-width', 2).style('stroke-linejoin', 'round');
+    });
+    const style = () => keys.forEach(k => paths[k].style('stroke', acfHi === k ? 'var(--accent)' : 'var(--ink2)').style('opacity', acfHi == null ? .75 : acfHi === k ? 1 : .18));
+    style();
+    const list = wrap.append('div').attr('class', 'legend').style('margin-top', '6px');
+    keys.forEach(k => {
+      list.append('button').attr('class', 'item').html(`<span class="sw line" style="background:var(--ink2)"></span>${pretty(k)} <span style="font-family:var(--mono);color:var(--muted)">${f2(A.labels[k][32])} at 32 s</span>`)
+        .on('mouseenter focus', () => { acfHi = k; style(); }).on('mouseleave blur', () => { acfHi = null; style(); });
+    });
+    const cross = c.g.append('line').attr('y1', 0).attr('y2', c.h).style('stroke', 'var(--ink2)').style('opacity', 0);
+    c.g.append('rect').attr('width', c.w).attr('height', c.h).attr('fill', 'transparent')
+      .on('mousemove', ev => {
+        const L = Math.max(x0, Math.min(180, Math.round(x.invert(d3.pointer(ev)[0]))));
+        cross.attr('x1', x(L)).attr('x2', x(L)).style('opacity', .4);
+        showTip(ev, `<div class="t">Shift of ${L} s</div>` + keys.map(k => `<div class="r"><span>${pretty(k)}</span><span>${f2(A.labels[k][L])}</span></div>`).join(''));
+      }).on('mouseleave', () => { cross.style('opacity', 0); hideTip(); });
+  }
+  // neural panel
+  {
+    const N = A.neural, m = { t: 26, r: 16, b: 40, l: 40 };
+    const wrap = box.append('div');
+    const c = svgFor(wrap.node(), pw, 280, m);
+    const x = d3.scaleLinear([x0, 180], [0, c.w]);
+    const y = d3.scaleLinear([-0.02, Math.max(d3.max(N.unit_q75.slice(x0)), d3.max(N.popvec.slice(x0)))], [c.h, 0]).nice();
+    gridY(c.g, y, c.w, 4); axisLeft(c.g, y, { ticks: 4 });
+    axisBottom(c.g, x, c.h, { values: [1, 30, 60, 90, 120, 150, 180], format: v => v + ' s' });
+    c.g.append('line').attr('x1', 0).attr('x2', c.w).attr('y1', y(0)).attr('y2', y(0)).style('stroke', 'var(--axis)');
+    c.g.append('line').attr('class', 'rule-accent').attr('x1', x(32)).attr('x2', x(32)).attr('y1', 0).attr('y2', c.h);
+    c.g.append('text').attr('class', 'vlabel').attr('x', x(32) + 5).attr('y', 8).text('32 s buffer');
+    label(c.svg, m.l, 14, 'Neural activity (1-s spike counts)', 'ptitle', 'start');
+    label(c.svg, m.l + c.w / 2, m.t + c.h + 36, 'Time shift (lag)');
+    const idx = d3.range(x0, lags.length);
+    c.g.append('path').attr('d', d3.area().x(i => x(lags[i])).y0(i => y(N.unit_q25[i])).y1(i => y(N.unit_q75[i]))(idx)).style('fill', 'var(--accent)').style('fill-opacity', .12);
+    c.g.append('path').attr('d', d3.line().x(i => x(lags[i])).y(i => y(N.unit_median[i]))(idx)).style('fill', 'none').style('stroke', 'var(--accent)').style('stroke-width', 2);
+    c.g.append('path').attr('d', d3.line().x(i => x(lags[i])).y(i => y(N.popvec[i]))(idx)).style('fill', 'none').style('stroke', 'var(--ink2)').style('stroke-width', 2);
+    wrap.append('div').attr('class', 'legend').style('margin-top', '6px').html(`<span class="item"><span class="sw line" style="background:var(--accent)"></span>Single neuron (median, band = middle 50%)</span><span class="item"><span class="sw line" style="background:var(--ink2)"></span>Whole-population pattern (per patient)</span>`);
+    const cross = c.g.append('line').attr('y1', 0).attr('y2', c.h).style('stroke', 'var(--ink2)').style('opacity', 0);
+    c.g.append('rect').attr('width', c.w).attr('height', c.h).attr('fill', 'transparent')
+      .on('mousemove', ev => {
+        const L = Math.max(x0, Math.min(180, Math.round(x.invert(d3.pointer(ev)[0]))));
+        cross.attr('x1', x(L)).attr('x2', x(L)).style('opacity', .4);
+        showTip(ev, `<div class="t">Shift of ${L} s</div>${trow('var(--accent)', 'Single neuron (median)', f3(N.unit_median[L]))}${trow('var(--ink2)', 'Population pattern', f3(N.popvec[L]))}`);
+      }).on('mouseleave', () => { cross.style('opacity', 0); hideTip(); });
+  }
+  const lab = A.labels, N = A.neural;
+  take('acf', `Labels stay correlated for a long time. Frames 32 s apart still share the "Summer" label with r = ${f2(lab.summer[32])}, and "Office" with r = ${f2(lab.office[32])}. Only brief features like "any person" (${f2(lab.persons[32])}) lose their correlation quickly. Neural activity has a smaller but <b>long tail</b>: the median neuron is still at ${f3(N.unit_median[32])} after 32 s and ${f3(N.unit_median[120])} after 2 min, reflecting the slow drift described in section 6. Without a gap between training and test data, a model can score well just by recognizing nearby moments in the movie.`);
+};
+
+/* ---------- boot ---------- */
+function renderOne(name) {
+  const el = document.querySelector(`[data-render="${name}"]`);
+  if (!el) return;
+  el.innerHTML = '';
+  try { R[name](el); } catch (e) { console.error(name, e); el.textContent = 'This chart failed to render: ' + e.message; }
+}
+function renderAll() {
+  hideTip();
+  R.stats();
+  buildLegends();
+  document.querySelectorAll('[data-render]').forEach(el => renderOne(el.dataset.render));
+}
+let lastW = 0, rt;
+window.addEventListener('resize', () => {
+  if (Math.abs(innerWidth - lastW) < 30) return;
+  clearTimeout(rt); rt = setTimeout(() => { lastW = innerWidth; renderAll(); }, 200);
+});
+matchMedia('(prefers-color-scheme: dark)').addEventListener('change', renderAll);
+new MutationObserver(renderAll).observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme'] });
+lastW = innerWidth;
+(document.fonts ? document.fonts.ready : Promise.resolve()).then(renderAll);
+</script>
