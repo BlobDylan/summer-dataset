@@ -3,7 +3,8 @@
 Reads every NWB file in data/nwb/, computes summary statistics, and inlines
 them into scripts/overview_template.html -> overview.html (repo root).
 
-    uv run --with h5py --with numpy --with scipy python scripts/build_overview.py
+    uv run --with h5py --with numpy --with scipy --with nilearn --with scikit-image \
+        python scripts/build_overview.py
 
 Notes on the raw data that this script relies on:
 - units/spike_times are in milliseconds on the neural recording clock, which
@@ -75,6 +76,54 @@ def to_movie_time(spikes_ms, nt, pts):
     frac = (spikes_ms - nt[i]) / np.where(gap > 0, gap, 1)
     t = pts[i] + frac * (pts[i + 1] - pts[i])
     return np.where(ok, t, np.nan)
+
+
+def brain_meshes(bundles):
+    """Glass-brain and atlas-structure meshes in MNI152 space for the 3D electrode view.
+
+    The brain outline is the MNI152 2009 GM+WM template bundled with nilearn; the
+    structures come from the Harvard-Oxford atlas (downloaded once to ~/nilearn_data).
+    Vertices are stored as int16 in 0.1 mm units.
+    """
+    import nibabel as nib
+    from nilearn import datasets, image
+    from scipy import ndimage
+    from skimage import measure
+
+    def mesh(vol, affine, sigma, step=1):
+        v = ndimage.gaussian_filter(vol.astype(np.float32), sigma)[::step, ::step, ::step]
+        verts, faces, _, _ = measure.marching_cubes(v, 0.5)
+        world = nib.affines.apply_affine(affine, verts * step)
+        if np.linalg.det(affine[:3, :3]) < 0:
+            faces = faces[:, ::-1]
+        return {"nv": int(len(verts)), "v": b64(np.round(world * 10).astype(np.int16)),
+                "f": b64(faces.astype(np.uint16 if len(verts) < 65536 else np.uint32))}
+
+    gm = image.load_img(datasets.load_mni152_gm_template(resolution=1))
+    wm = image.load_img(datasets.load_mni152_wm_template(resolution=1))
+    brain = mesh(gm.get_fdata() + wm.get_fdata(), gm.affine, 1.5, step=3)
+
+    sub = image.load_img(datasets.fetch_atlas_harvard_oxford("sub-maxprob-thr25-1mm").maps)
+    cort = image.load_img(datasets.fetch_atlas_harvard_oxford("cort-maxprob-thr25-1mm").maps)
+    S, C = sub.get_fdata(), cort.get_fdata()
+    xs = (sub.affine[0, 0] * np.arange(S.shape[0]) + sub.affine[0, 3])[:, None, None]  # MNI x per voxel column
+    masks = {  # (name, group) -> boolean volume on the shared 1 mm grid
+        ("Amygdala", "Amygdala"): np.isin(S, [10, 20]),
+        ("Hippocampus", "Hippocampus"): np.isin(S, [9, 19]),
+        ("Anterior parahippocampal gyrus (incl. entorhinal cortex)", "Entorhinal cx"): C == 34,
+        ("Posterior parahippocampal gyrus", "Parahippocampal cx"): C == 35,
+    }
+    structures, fit = [], {}
+    inv = np.linalg.inv(sub.affine)
+    for (name, group), m in masks.items():
+        for hemi, side in (("L", xs < 0), ("R", xs >= 0)):
+            structures.append({"name": name, "group": group, "hemi": hemi, **mesh(m & side, sub.affine, 1.0)})
+        dist = ndimage.distance_transform_edt(~m)
+        bs = [b for b in bundles if b["group"] == group]
+        ijk = np.round(nib.affines.apply_affine(inv, [[b["x"], b["y"], b["z"]] for b in bs])).astype(int)
+        d = dist[ijk[:, 0], ijk[:, 1], ijk[:, 2]]
+        fit[group] = {"n": len(bs), "within3": r((d <= 3).mean(), 3)}
+    return {"brain": brain, "structures": structures, "fit": fit}
 
 
 def label_category(name):
@@ -422,6 +471,7 @@ def main():
                  "groups": GROUPS, "region_names": REGION_NAME,
                  "pauses_total": int(sum(len(p["pauses"]) for p in patients))},
         "patients": patients, "units": units, "bundles": bundles, "playback": playback,
+        "brain3d": brain_meshes(bundles),
         "waveforms": b64(np.stack(waveforms)),
         "per_wire": per_wire.tolist(),
         "labels": labels, "barcode": {"cols": int(n_cols), "data": b64(barcode_u8)},

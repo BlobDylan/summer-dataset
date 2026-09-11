@@ -120,7 +120,16 @@ section { padding-top: 56px; display: grid; gap: 20px; }
 
 .controls { display: flex; flex-wrap: wrap; gap: 10px 18px; align-items: center; font-size: 13px; color: var(--ink2); }
 select { font: 13px var(--sans); color: var(--ink); background: var(--bg); border: 1px solid var(--axis); border-radius: 6px; padding: 4px 8px; }
-select:focus-visible, button:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+select:focus-visible, button:focus-visible, input:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.btn { font: 12.5px var(--sans); color: var(--ink2); background: var(--surface); border: 1px solid var(--axis); border-radius: 6px; padding: 3px 9px; cursor: pointer; }
+.btn:hover { color: var(--ink); background: var(--zero); }
+.btn-group { display: inline-flex; flex-wrap: wrap; gap: 4px; }
+.controls label.check { display: inline-flex; align-items: center; gap: 5px; cursor: pointer; }
+.controls input[type="checkbox"] { accent-color: var(--accent); margin: 0; }
+.stage { position: relative; max-width: 100%; border-radius: 10px; background: var(--zero); overflow: hidden; touch-action: none; cursor: grab; }
+.stage:active { cursor: grabbing; }
+.stage canvas { display: block; }
+.stage .hint { position: absolute; left: 12px; bottom: 10px; font: 11px var(--mono); color: var(--muted); pointer-events: none; }
 
 /* Chart chrome */
 .ax path, .ax line { stroke: var(--axis); }
@@ -285,6 +294,13 @@ footer { margin-top: 64px; padding-top: 20px; border-top: 1px solid var(--border
       <div class="legend" data-legend="groups-toggle-mni"></div>
       <div class="plot" data-render="mni"></div>
       <p class="take" id="take-mni"></p>
+    </figure>
+    <figure class="fig">
+      <figcaption><h3>The same bundles in 3D, inside a glass brain</h3>
+        <p class="how"><b>How to read:</b> <b>drag</b> to rotate, <b>scroll or pinch</b> to zoom, and <b>right-drag</b> (or two-finger drag) to pan. Each sphere is one bundle, colored by region and sized by its number of neurons. The faint shell is the MNI152 template brain. The tinted shapes are atlas outlines (Harvard-Oxford) of the amygdala, hippocampus and parahippocampal gyrus, colored like the bundles recorded there. These come from a standard atlas, not the patients' own scans. Pick a patient to see just their implant, click a legend entry to hide a region, and hover a sphere for details. "From below" gives the clearest view of the medial temporal lobe.</p></figcaption>
+      <div class="legend" id="brain3d-legend"></div>
+      <div class="plot" data-render="brain3d"></div>
+      <p class="take" id="take-brain3d"></p>
     </figure>
       <figure class="fig">
         <figcaption><h3>Neurons per region: single vs multi-unit</h3>
@@ -460,6 +476,8 @@ footer { margin-top: 64px; padding-top: 20px; border-top: 1px solid var(--border
 <div id="tip" hidden></div>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.9.0/d3.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
 <script>
 const DATA = /*__DATA__*/null;
 const G = DATA.meta.groups;
@@ -753,6 +771,223 @@ R.mni = el => {
   const my = g => Math.round(d3.median(all.filter(b => b.group === g), b => b.y));
   const q = (k, p) => Math.round(d3.quantile(all.map(b => b[k]).sort(d3.ascending), p));
   take('mni', `<b>${all.length}</b> bundles: ${L} in the left hemisphere and ${all.length - L} in the right, mirrored across the midline. Nearly all sit in a compact medial-temporal band (y from ${q('y', .02)} to ${q('y', .98)} mm, z from ${q('z', .02)} to ${q('z', .98)} mm). From front to back: <b>amygdala</b> and <b>entorhinal cortex</b> sit furthest forward (median y ${my('Amygdala')} and ${my('Entorhinal cx')} mm), hippocampus is in the middle (${my('Hippocampus')} mm), and <b>parahippocampal cortex</b> is furthest back (${my('Parahippocampal cx')} mm). Bundles were placed for clinical reasons, so the exact spot sampled within each region differs between patients.`);
+};
+
+/* ---------- 3D glass brain ---------- */
+const reducedMotion = matchMedia('(prefers-reduced-motion: reduce)').matches;
+const b3 = { hidden: new Set(), patient: 'all', brain: true, atlas: true, spin: !reducedMotion, cam: null, live: null };
+const toThree = (x, y, z) => [x, z, -y];  // MNI (right, anterior, up) -> three.js (right, up, toward viewer = posterior)
+
+function meshGeometry(m) {
+  const v = decode(m.v, Int16Array), f = decode(m.f, m.nv < 65536 ? Uint16Array : Uint32Array);
+  const pos = new Float32Array(v.length);
+  for (let i = 0; i < v.length; i += 3) { pos[i] = v[i] / 10; pos[i + 1] = v[i + 2] / 10; pos[i + 2] = -v[i + 1] / 10; }
+  const g = new THREE.BufferGeometry();
+  g.setAttribute('position', new THREE.BufferAttribute(pos, 3));
+  g.setIndex(new THREE.BufferAttribute(f, 1));
+  g.computeVertexNormals();
+  return g;
+}
+function glassMaterial(color, base, rim) {   // transparent in the middle, denser at grazing angles
+  return new THREE.ShaderMaterial({
+    uniforms: { color: { value: new THREE.Color(color) }, base: { value: base }, rim: { value: rim } },
+    vertexShader: 'varying vec3 vN; varying vec3 vV; void main(){ vec4 mv = modelViewMatrix * vec4(position, 1.0); vN = normalize(normalMatrix * normal); vV = normalize(-mv.xyz); gl_Position = projectionMatrix * mv; }',
+    fragmentShader: 'uniform vec3 color; uniform float base; uniform float rim; varying vec3 vN; varying vec3 vV; void main(){ float f = 1.0 - abs(dot(normalize(vN), normalize(vV))); gl_FragColor = vec4(color, base + rim * pow(f, 2.0)); }',
+    transparent: true, depthWrite: false, side: THREE.DoubleSide,
+  });
+}
+function textSprite(text, color) {
+  const cv = document.createElement('canvas'), ctx = cv.getContext('2d'), fs = 44, font = `500 ${fs}px ${cssv('--mono')}`;
+  ctx.font = font;
+  cv.width = Math.ceil(ctx.measureText(text).width) + 16; cv.height = fs + 16;
+  ctx.font = font; ctx.fillStyle = color; ctx.textBaseline = 'middle'; ctx.fillText(text, 8, cv.height / 2);
+  const s = new THREE.Sprite(new THREE.SpriteMaterial({ map: new THREE.CanvasTexture(cv), depthTest: false, transparent: true }));
+  s.scale.set(cv.width / cv.height * 5.5, 5.5, 1); s.renderOrder = 10;
+  return s;
+}
+
+R.brain3d = el => {
+  if (b3.live) b3.live.dispose();
+  if (!window.THREE || !THREE.OrbitControls) {
+    el.innerHTML = '<p class="note">The 3D view needs three.js, which loads from a CDN. Check your internet connection and reload the page.</p>';
+    return;
+  }
+  const Bd = DATA.bundles, M = DATA.brain3d, width = W(el), height = Math.round(Math.max(380, Math.min(640, width * .6)));
+
+  const leg = document.getElementById('brain3d-legend');
+  leg.innerHTML = '';
+  G.forEach((g, i) => {
+    const b = document.createElement('button');
+    b.className = 'item' + (b3.hidden.has(g) ? ' off' : '');
+    b.setAttribute('aria-pressed', String(!b3.hidden.has(g)));
+    b.innerHTML = `<span class="sw" style="background:${gcol(i)};border-radius:50%"></span>${g}`;
+    b.onclick = () => {
+      b3.hidden.has(g) ? b3.hidden.delete(g) : b3.hidden.add(g);
+      b.classList.toggle('off', b3.hidden.has(g)); b.setAttribute('aria-pressed', String(!b3.hidden.has(g)));
+      apply();
+    };
+    leg.appendChild(b);
+  });
+
+  const ctr = document.createElement('div');
+  ctr.className = 'controls'; ctr.style.marginBottom = '10px';
+  const views = [['left', 'From left'], ['right', 'From right'], ['below', 'From below'], ['above', 'From above'], ['front', 'From front']];
+  ctr.innerHTML = `<label for="brain3d-patient">Patient</label>
+    <select id="brain3d-patient"><option value="all">All patients</option>${DATA.patients.map(p => `<option value="${p.id}">P${p.id} · ${Bd.filter(b => b.p === p.id).length} bundles</option>`).join('')}</select>
+    <span class="btn-group" role="group" aria-label="Camera views">${views.map(([k, l]) => `<button class="btn" data-view="${k}">${l}</button>`).join('')}</span>
+    <label class="check"><input type="checkbox" id="brain3d-brain"${b3.brain ? ' checked' : ''}>Brain</label>
+    <label class="check"><input type="checkbox" id="brain3d-atlas"${b3.atlas ? ' checked' : ''}>Atlas regions</label>
+    <label class="check"><input type="checkbox" id="brain3d-spin"${b3.spin ? ' checked' : ''}>Spin</label>
+    <span id="brain3d-info"></span>`;
+  el.appendChild(ctr);
+  const stage = document.createElement('div');
+  stage.className = 'stage'; stage.style.width = width + 'px'; stage.style.height = height + 'px';
+  el.appendChild(stage);
+
+  const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+  renderer.setPixelRatio(Math.min(2, window.devicePixelRatio || 1));
+  renderer.setSize(width, height);
+  renderer.setClearColor(0x000000, 0);
+  stage.appendChild(renderer.domElement);
+  stage.insertAdjacentHTML('beforeend', '<div class="hint">drag to rotate · scroll to zoom · right-drag to pan</div>');
+
+  const scene = new THREE.Scene();
+  const camera = new THREE.PerspectiveCamera(30, width / height, 1, 3000);
+  scene.add(camera);
+  scene.add(new THREE.AmbientLight(0xffffff, 0.55));
+  camera.add(new THREE.PointLight(0xffffff, 0.75));
+
+  const brainGeo = meshGeometry(M.brain);
+  brainGeo.computeBoundingBox();
+  const center = brainGeo.boundingBox.getCenter(new THREE.Vector3());
+  const brain = new THREE.Mesh(brainGeo, glassMaterial(cssv('--ink2'), 0.012, 0.22));
+  brain.renderOrder = 3; scene.add(brain);
+  const structs = M.structures.map(s => {
+    const mesh = new THREE.Mesh(meshGeometry(s), glassMaterial(cssv(GVAR[G.indexOf(s.group)]), 0.1, 0.55));
+    mesh.renderOrder = 2; mesh.userData = s; scene.add(mesh);
+    return mesh;
+  });
+
+  const radius = b => 1.2 + 0.45 * Math.sqrt(b.units);
+  const inst = new THREE.InstancedMesh(new THREE.SphereGeometry(1, 20, 14), new THREE.MeshLambertMaterial({ color: 0xffffff }), Bd.length);
+  const gcolors = GVAR.map(v => new THREE.Color(cssv(v)));
+  Bd.forEach((b, i) => inst.setColorAt(i, gcolors[G.indexOf(b.group)]));
+  inst.renderOrder = 1; scene.add(inst);
+  const ring = new THREE.Mesh(new THREE.SphereGeometry(1, 16, 10), new THREE.MeshBasicMaterial({ color: new THREE.Color(cssv('--ink')), wireframe: true, transparent: true, opacity: .6, depthTest: false }));
+  ring.visible = false; ring.renderOrder = 5; scene.add(ring);
+
+  const muted = cssv('--muted');
+  const labels = [['Left', -90, -18, 5], ['Right', 90, -18, 5], ['Anterior', 0, 82, 5], ['Posterior', 0, -118, 5], ['Superior', 0, -18, 90], ['Inferior', 0, -18, -62]]
+    .map(([t, x, y, z]) => { const s = textSprite(t, muted); s.position.set(...toThree(x, y, z)); scene.add(s); return s; });
+  const camDir = new THREE.Vector3(), labelDir = new THREE.Vector3();
+  const updateLabels = () => {   // hide labels on the far side of the brain so they don't read through it
+    camDir.copy(camera.position).sub(controls.target).normalize();
+    labels.forEach(s => { s.visible = labelDir.copy(s.position).sub(center).normalize().dot(camDir) > -0.25; });
+  };
+
+  const controls = new THREE.OrbitControls(camera, renderer.domElement);
+  controls.enableDamping = true; controls.dampingFactor = .08; controls.autoRotateSpeed = .8;
+  controls.minDistance = 60; controls.maxDistance = 900;
+  const DIST = 340;
+  const VIEWS = { home: [-0.75, -0.35, -0.6], left: [-1, 0, 0], right: [1, 0, 0], below: [0, -1, -0.02], above: [0, 1, 0.02], front: [0, 0, -1] };
+  let anim = null;
+  function setView(k, animate) {
+    const toT = center.clone(), toDir = new THREE.Vector3(...VIEWS[k]).normalize();
+    const fromT = controls.target.clone(), fromOff = camera.position.clone().sub(fromT), fromDist = fromOff.length() || DIST, fromDir = fromOff.normalize();
+    if (!animate || reducedMotion || fromDir.dot(toDir) < -0.95) {
+      controls.target.copy(toT); camera.position.copy(toDir.multiplyScalar(DIST).add(toT)); controls.update(); return;
+    }
+    const t0 = performance.now();
+    anim = now => {
+      const t = Math.min(1, (now - t0) / 650), e = t < .5 ? 2 * t * t : 1 - (-2 * t + 2) ** 2 / 2;
+      controls.target.lerpVectors(fromT, toT, e);
+      const dir = fromDir.clone().lerp(toDir, e).normalize();
+      camera.position.copy(dir.multiplyScalar(fromDist + (DIST - fromDist) * e).add(controls.target));
+      if (t >= 1) anim = null;
+    };
+  }
+  if (b3.cam) { camera.position.fromArray(b3.cam.pos); controls.target.fromArray(b3.cam.target); controls.update(); }
+  else setView('home', false);
+
+  const dummy = new THREE.Object3D();
+  function apply() {
+    const pid = b3.patient === 'all' ? null : +b3.patient;
+    Bd.forEach((b, i) => {
+      const on = !b3.hidden.has(b.group) && (pid == null || b.p === pid);
+      dummy.position.set(...toThree(b.x, b.y, b.z)); dummy.scale.setScalar(on ? radius(b) : 1e-4); dummy.updateMatrix();
+      inst.setMatrixAt(i, dummy.matrix);
+    });
+    inst.instanceMatrix.needsUpdate = true;
+    if (inst.instanceColor) inst.instanceColor.needsUpdate = true;
+    brain.visible = b3.brain;
+    structs.forEach(m => { m.visible = b3.atlas && !b3.hidden.has(m.userData.group); });
+    controls.autoRotate = b3.spin;
+    ring.visible = false; hideTip();
+    const info = document.getElementById('brain3d-info');
+    if (pid == null) info.textContent = `${Bd.length} bundles from ${DATA.patients.length} patients`;
+    else {
+      const p = DATA.patients.find(q => q.id === pid), mine = Bd.filter(b => b.p === pid);
+      info.textContent = `P${pid}: ${mine.length} bundles, ${p.units} neurons · ${mine.filter(b => b.hemi === 'L').length} left / ${mine.filter(b => b.hemi === 'R').length} right`;
+    }
+  }
+  apply();
+
+  const sel = ctr.querySelector('#brain3d-patient');
+  sel.value = b3.patient;
+  sel.onchange = () => { b3.patient = sel.value; apply(); };
+  ctr.querySelectorAll('[data-view]').forEach(btn => { btn.onclick = () => setView(btn.dataset.view, true); });
+  ['brain', 'atlas', 'spin'].forEach(k => { ctr.querySelector('#brain3d-' + k).onchange = e => { b3[k] = e.target.checked; apply(); }; });
+
+  const ray = new THREE.Raycaster(), ptr = new THREE.Vector2();
+  let dragging = false;
+  const cvs = renderer.domElement;
+  const onUp = () => { dragging = false; };
+  cvs.addEventListener('pointerdown', () => {
+    dragging = true; anim = null; ring.visible = false; hideTip();
+    if (b3.spin) { b3.spin = false; controls.autoRotate = false; ctr.querySelector('#brain3d-spin').checked = false; }
+  });
+  window.addEventListener('pointerup', onUp);
+  cvs.addEventListener('pointermove', ev => {
+    if (dragging) return;
+    const rect = cvs.getBoundingClientRect();
+    ptr.set((ev.clientX - rect.left) / rect.width * 2 - 1, -((ev.clientY - rect.top) / rect.height) * 2 + 1);
+    ray.setFromCamera(ptr, camera);
+    const hit = ray.intersectObject(inst)[0];
+    if (!hit) { ring.visible = false; stage.style.cursor = ''; hideTip(); return; }
+    const b = Bd[hit.instanceId];
+    ring.position.set(...toThree(b.x, b.y, b.z)); ring.scale.setScalar(radius(b) * 1.4); ring.visible = true;
+    stage.style.cursor = 'pointer';
+    showTip(ev, `<div class="t">Patient ${b.p} · bundle ${b.name}</div><div class="m">${DATA.meta.region_names[b.region]} (${b.hemi === 'L' ? 'left' : 'right'})</div>
+      <div class="m">${b.units} neurons on ${b.wires} wire${b.wires > 1 ? 's' : ''}</div><div class="m">MNI x ${b.x}, y ${b.y}, z ${b.z} mm</div>`);
+  });
+  cvs.addEventListener('pointerleave', () => { ring.visible = false; hideTip(); });
+
+  let raf = 0, onScreen = true;
+  const io = new IntersectionObserver(es => { onScreen = es[0].isIntersecting; });
+  io.observe(stage);
+  const tick = now => {
+    raf = requestAnimationFrame(tick);
+    if (!onScreen) return;
+    if (anim) anim(now);
+    controls.update();
+    updateLabels();
+    renderer.render(scene, camera);
+  };
+  raf = requestAnimationFrame(tick);
+
+  b3.live = {
+    dispose() {
+      cancelAnimationFrame(raf); io.disconnect(); window.removeEventListener('pointerup', onUp);
+      b3.cam = { pos: camera.position.toArray(), target: controls.target.toArray() };
+      controls.dispose();
+      scene.traverse(o => { if (o.geometry) o.geometry.dispose(); if (o.material) { if (o.material.map) o.material.map.dispose(); o.material.dispose(); } });
+      renderer.dispose(); renderer.forceContextLoss();
+      b3.live = null;
+    },
+  };
+
+  const fit = M.fit;
+  take('brain3d', `The electrode coordinates line up well with a standard atlas. <b>${pct(fit.Amygdala.within3)}</b> of amygdala bundles, <b>${pct(fit.Hippocampus.within3)}</b> of hippocampal bundles and <b>${pct(fit['Entorhinal cx'].within3)}</b> of entorhinal bundles sit within 3 mm of the matching Harvard-Oxford structure. Parahippocampal bundles fit less tightly (${pct(fit['Parahippocampal cx'].within3)}), likely because the atlas splits the parahippocampal gyrus at a different point than the raters did. From below, you can see that nearly all recordings sit along the inner (medial) edge of the temporal lobes. ${DATA.patients.filter(p => new Set(Bd.filter(b => b.p === p.id).map(b => b.hemi)).size === 2).length} of ${DATA.patients.length} patients have electrodes in both hemispheres.`);
 };
 
 R.regions = el => {
