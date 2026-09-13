@@ -1,0 +1,632 @@
+<title>SUMMER Project Scouting</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700&family=JetBrains+Mono:wght@400;600&family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,600;1,8..60,400&display=swap">
+<style>
+:root{
+  --ground:#F1F4F7; --surface:#FFFFFF; --ink:#16202A; --muted:#566473;
+  --rule:#D5DDE5; --rule-strong:#B7C3CF; --meter-off:#DCE3EA;
+  --summer:#2F6AA8; --summer-soft:#DDE8F4; --summer-ink:#1F4F84;
+  --sun-soft:#F5E6BF; --sun-ink:#6E4B00;
+  --warn:#B4532F; --warn-soft:#F4DDD5; --warn-ink:#8C3A26;
+  --skip-soft:#E6EAEE; --skip-ink:#65707B;
+  --display:"Bricolage Grotesque", "Avenir Next", "Segoe UI", system-ui, sans-serif;
+  --serif:"Source Serif 4", Georgia, "Times New Roman", serif;
+  --mono:"JetBrains Mono", ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --ground:#0D1318; --surface:#141C23; --ink:#E2E8EE; --muted:#95A3B1;
+    --rule:#24303B; --rule-strong:#35434F; --meter-off:#26323D;
+    --summer:#86B4E4; --summer-soft:#1B2F44; --summer-ink:#A9CBEF;
+    --sun-soft:#3A2D10; --sun-ink:#E4B551;
+    --warn:#E0876B; --warn-soft:#3B221B; --warn-ink:#F1B09E;
+    --skip-soft:#1E262E; --skip-ink:#8D98A3;
+  }
+}
+:root[data-theme="dark"]{
+  --ground:#0D1318; --surface:#141C23; --ink:#E2E8EE; --muted:#95A3B1;
+  --rule:#24303B; --rule-strong:#35434F; --meter-off:#26323D;
+  --summer:#86B4E4; --summer-soft:#1B2F44; --summer-ink:#A9CBEF;
+  --sun-soft:#3A2D10; --sun-ink:#E4B551;
+  --warn:#E0876B; --warn-soft:#3B221B; --warn-ink:#F1B09E;
+  --skip-soft:#1E262E; --skip-ink:#8D98A3;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+@media (prefers-reduced-motion: reduce){html{scroll-behavior:auto}}
+body{background:var(--ground);color:var(--ink);font-family:var(--serif);font-size:17px;line-height:1.6}
+a{color:var(--summer-ink);text-decoration-thickness:1px;text-underline-offset:3px}
+a:hover{color:var(--summer)}
+:focus-visible{outline:2px solid var(--summer);outline-offset:2px;border-radius:3px}
+.wrap{max-width:1120px;margin:0 auto;padding-inline:clamp(16px,4vw,40px);padding-block:40px 80px}
+
+/* type scale: 12 / 14 / 17 / 22 / 30 / clamp display */
+.label{font-family:var(--mono);font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+h1,h2,h3{font-family:var(--display);text-wrap:balance;margin:0;line-height:1.1}
+h1{font-size:clamp(2.3rem,5.4vw,3.8rem);font-weight:700;letter-spacing:-.025em}
+h2{font-size:30px;font-weight:700;letter-spacing:-.015em}
+h3{font-size:22px;font-weight:500;letter-spacing:-.01em}
+p{margin:0}
+.lede{font-size:20px;max-width:62ch;color:var(--ink)}
+.prose{max-width:66ch}
+.muted{color:var(--muted)}
+.num{font-family:var(--mono);font-variant-numeric:tabular-nums}
+
+header.top{display:grid;gap:22px;padding-bottom:36px;border-bottom:1px solid var(--rule)}
+.facts{display:flex;flex-wrap:wrap;gap:10px 26px;font-family:var(--mono);font-size:13px;color:var(--muted)}
+.facts b{color:var(--ink);font-weight:600}
+nav.jump{display:flex;flex-wrap:wrap;gap:8px 18px;font-family:var(--mono);font-size:13px}
+nav.jump a{text-decoration:none;border-bottom:1px solid var(--rule-strong);padding-bottom:1px}
+
+section{padding-top:64px;display:grid;gap:26px}
+.sec-head{display:grid;gap:10px}
+
+/* constraints */
+.rules{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:0 48px}
+.rule{display:grid;gap:6px;padding:18px 0;border-top:1px solid var(--rule)}
+.rule h3{font-size:19px;font-weight:700}
+.rule p{font-size:16px}
+.rule .src{font-family:var(--mono);font-size:11px;letter-spacing:.06em;text-transform:uppercase}
+.src.you{color:var(--summer-ink)} .src.found{color:var(--warn-ink)}
+.regions{background:var(--surface);border:1px solid var(--rule);border-radius:6px;padding:22px;display:grid;gap:14px}
+.bars{display:grid;gap:7px}
+.bar{display:grid;grid-template-columns:12.5em 1fr 7.5em;align-items:center;gap:12px;font-size:14px}
+.bar .name{font-family:var(--serif)}
+.bar .track{height:14px;background:var(--meter-off);border-radius:2px;position:relative;overflow:hidden}
+.bar .all{position:absolute;inset:0 auto 0 0;background:var(--summer-soft);border-right:1px solid var(--summer)}
+.bar .su{position:absolute;inset:0 auto 0 0;background:var(--summer)}
+.bar .v{font-family:var(--mono);font-size:12px;color:var(--muted);text-align:right;font-variant-numeric:tabular-nums}
+.legend{display:flex;flex-wrap:wrap;gap:6px 18px;font-family:var(--mono);font-size:12px;color:var(--muted)}
+.sw{display:inline-block;width:10px;height:10px;border-radius:2px;margin-right:6px;vertical-align:-1px}
+.expect{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:18px;font-size:15px}
+.expect ul{margin:6px 0 0;padding-left:1.1em}
+.expect li{margin:2px 0}
+
+/* shortlist */
+.picks{display:grid;gap:0;counter-reset:none}
+.pick{display:grid;grid-template-columns:9.5em 1fr;gap:18px;padding:18px 0;border-top:1px solid var(--rule)}
+.pick:last-child{border-bottom:1px solid var(--rule)}
+.pick .which{font-family:var(--mono);font-size:13px;color:var(--summer-ink);display:grid;gap:4px;align-content:start}
+.pick h3{font-size:21px;margin-bottom:6px}
+.pick p{max-width:70ch}
+.pick p + p{margin-top:8px}
+
+/* verdict pills */
+.pill{display:inline-block;font-family:var(--mono);font-size:11px;letter-spacing:.04em;padding:3px 8px;border-radius:999px;white-space:nowrap;border:1px solid transparent}
+.v-top{background:var(--summer-soft);color:var(--summer-ink);border-color:var(--summer)}
+.v-quick{background:var(--sun-soft);color:var(--sun-ink)}
+.v-solid{background:var(--surface);color:var(--muted);border-color:var(--rule-strong)}
+.v-long{background:var(--warn-soft);color:var(--warn-ink)}
+.v-skip{background:var(--skip-soft);color:var(--skip-ink);text-decoration:line-through}
+
+/* matrix */
+.matrix-wrap{overflow-x:auto}
+.matrix{display:grid;grid-template-columns:2.2em repeat(5,minmax(96px,1fr));grid-template-rows:repeat(5,minmax(74px,auto)) 2.4em;min-width:560px;position:relative}
+.cell{border-left:1px solid var(--rule);border-top:1px solid var(--rule);padding:6px;display:flex;flex-wrap:wrap;gap:5px;align-content:flex-start}
+.cell.hot{background:color-mix(in srgb,var(--summer-soft) 60%,transparent)}
+.cell.edge-r{border-right:1px solid var(--rule)}
+.cell.edge-b{border-bottom:1px solid var(--rule)}
+.ylab,.xlab{font-family:var(--mono);font-size:12px;color:var(--muted);display:flex;align-items:center;justify-content:center}
+.chip{font-family:var(--mono);font-size:12px;font-weight:600;min-width:28px;height:26px;padding:0 6px;border-radius:13px;border:1px solid transparent;cursor:pointer;font-variant-numeric:tabular-nums}
+.chip:hover{filter:brightness(.95)}
+.axis-note{display:flex;justify-content:space-between;flex-wrap:wrap;gap:8px;font-family:var(--mono);font-size:12px;color:var(--muted)}
+
+/* idea list */
+.controls{display:flex;flex-wrap:wrap;gap:12px 22px;align-items:center}
+.seg{display:flex;flex-wrap:wrap;gap:6px}
+.seg button{font-family:var(--mono);font-size:12px;padding:6px 11px;border-radius:999px;border:1px solid var(--rule-strong);background:var(--surface);color:var(--ink);cursor:pointer}
+.seg button[aria-pressed="true"]{background:var(--ink);color:var(--ground);border-color:var(--ink)}
+.controls label{font-family:var(--mono);font-size:12px;color:var(--muted);display:flex;align-items:center;gap:8px}
+.controls select{font-family:var(--mono);font-size:12px;padding:6px 8px;border-radius:4px;border:1px solid var(--rule-strong);background:var(--surface);color:var(--ink)}
+.count{font-family:var(--mono);font-size:12px;color:var(--muted)}
+
+.ideas{border-top:1px solid var(--rule-strong)}
+.ihead,.idea>summary{display:grid;grid-template-columns:2.6em minmax(0,1fr) repeat(4,5.4em) 6.6em 7.4em;gap:12px;align-items:center}
+.ihead{padding:10px 0;font-family:var(--mono);font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);border-bottom:1px solid var(--rule-strong)}
+.idea{border-bottom:1px solid var(--rule)}
+.idea>summary{list-style:none;cursor:pointer;padding:14px 0}
+.idea>summary::-webkit-details-marker{display:none}
+.idea>summary:hover .t{color:var(--summer-ink)}
+.idea[open]>summary{background:color-mix(in srgb,var(--summer-soft) 45%,transparent)}
+.inum{font-family:var(--mono);font-size:13px;color:var(--muted);padding-left:4px;font-variant-numeric:tabular-nums}
+.t{font-family:var(--display);font-size:18px;font-weight:500;line-height:1.25}
+.track{font-family:var(--mono);font-size:11px;color:var(--muted);margin-top:3px;display:block}
+.meter{display:flex;gap:2px}
+.meter i{display:block;width:8px;height:12px;border-radius:1px;background:var(--meter-off)}
+.meter i.on{background:var(--summer)}
+.meter.risk i.on{background:var(--warn)}
+.mlab{display:none}
+.effort{font-family:var(--mono);font-size:12px;color:var(--muted)}
+.body{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:18px 40px;padding:6px 0 24px 3.4em;font-size:16px}
+.body .full{grid-column:1/-1}
+.body h4{font-family:var(--mono);font-size:11px;letter-spacing:.07em;text-transform:uppercase;color:var(--muted);margin:0 0 4px;font-weight:600}
+.tags{display:flex;flex-wrap:wrap;gap:6px}
+.tag{font-family:var(--mono);font-size:11px;padding:2px 7px;border-radius:3px;background:var(--skip-soft);color:var(--ink)}
+.refs a{font-family:var(--mono);font-size:12px;margin-right:12px;white-space:nowrap}
+
+/* papers */
+.pgroup{display:grid;gap:4px}
+.pgroup>h3{padding:26px 0 8px}
+.plist{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:0 44px}
+.paper{padding:16px 0;border-top:1px solid var(--rule);display:grid;gap:6px;scroll-margin-top:20px}
+.paper:target{background:color-mix(in srgb,var(--summer-soft) 60%,transparent)}
+.paper .ptitle{font-weight:600;font-size:17px;line-height:1.35}
+.paper .venue{font-family:var(--mono);font-size:12px;color:var(--muted)}
+.paper p{font-size:15px}
+.paper .why{color:var(--ink)}
+.paper .why::before{content:"For us: ";font-family:var(--mono);font-size:11px;letter-spacing:.05em;text-transform:uppercase;color:var(--summer-ink)}
+.paper .used{font-family:var(--mono);font-size:11px;color:var(--muted)}
+.paper .used a{margin-left:6px}
+
+footer{margin-top:64px;padding-top:20px;border-top:1px solid var(--rule);font-size:14px;color:var(--muted);max-width:80ch}
+
+@media (max-width:860px){
+  .rules,.expect,.plist{grid-template-columns:1fr}
+  .pick{grid-template-columns:1fr;gap:6px}
+  .ihead{display:none}
+  .idea>summary{grid-template-columns:2.4em minmax(0,1fr) auto;grid-template-areas:"n t v" ". m m";row-gap:10px}
+  .idea>summary .inum{grid-area:n;align-self:start;padding-top:3px}
+  .idea>summary .tt{grid-area:t}
+  .idea>summary .vv{grid-area:v;align-self:start}
+  .mrow{grid-area:m;display:flex;flex-wrap:wrap;gap:8px 16px}
+  .mlab{display:inline;font-family:var(--mono);font-size:10px;color:var(--muted);margin-right:5px;text-transform:uppercase;letter-spacing:.05em}
+  .mcell{display:flex;align-items:center}
+  .body{grid-template-columns:1fr;padding-left:2.4em}
+  .bar{grid-template-columns:8.5em 1fr 6.5em}
+}
+@media (min-width:861px){ .mrow{display:contents} }
+</style>
+
+<div class="wrap">
+  <header class="top">
+    <span class="label">Neuro-AI · project scouting · dataset DANDI:001616</span>
+    <h1>SUMMER Project Scouting</h1>
+    <p class="lede">Research directions for a brain-to-text group working with SUMMER: human medial temporal lobe neurons recorded while 29 patients watched <em>(500) Days of Summer</em>. It covers what the data can and can't support, 31 candidate projects compared side by side, a roadmap sized for a course project that seeds a thesis, and the papers behind it all.</p>
+    <div class="facts">
+      <span><b>2,286</b> units (1,190 single)</span>
+      <span><b>29</b> patients, 30–137 units each</span>
+      <span><b>125,743</b> frames @ 25 fps</span>
+      <span>analysis window <b>00:00:36.72 → 01:19:23.20</b></span>
+      <span>default bin <b>80 ms</b>, split buffer <b>32 s</b></span>
+    </div>
+    <nav class="jump" aria-label="Sections">
+      <a href="#ground">Ground rules</a><a href="#decisions">Decisions so far</a><a href="#shortlist">Roadmap</a><a href="#matrix">Fit × feasibility</a><a href="#ideas">All 31 ideas</a><a href="#papers">Reading list</a>
+    </nav>
+  </header>
+
+  <section id="ground">
+    <div class="sec-head">
+      <span class="label">Before choosing</span>
+      <h2>Ground rules the data imposes</h2>
+      <p class="prose muted">Your four points, plus six more I found in the paper, its code repository and the related literature. Each idea below is scored against these.</p>
+    </div>
+
+    <div class="regions" aria-label="Units per brain region">
+      <div style="display:flex;justify-content:space-between;flex-wrap:wrap;gap:8px;align-items:baseline">
+        <h3 style="font-size:19px;font-weight:700">Where the 2,286 units are</h3>
+        <span class="legend"><span><span class="sw" style="background:var(--summer)"></span>single units</span><span><span class="sw" style="background:var(--summer-soft);border:1px solid var(--summer)"></span>all units (single + multi)</span></span>
+      </div>
+      <div class="bars" id="bars"></div>
+      <p class="label" style="text-transform:none;letter-spacing:0">Counted from your local NWB files (units/brain_region, is_single_unit).</p>
+      <div class="expect">
+        <div><strong>Reasonable to expect</strong>
+          <ul>
+            <li>Who is on screen: person and character identity (amygdala led decoding)</li>
+            <li>Scene, place, indoor vs outdoor (parahippocampal cortex)</li>
+            <li>Event boundaries, cuts and elapsed time (PHC, hippocampus, entorhinal)</li>
+            <li>Gist-level meaning of speech: hippocampal neurons track contextual word embeddings</li>
+          </ul>
+        </div>
+        <div><strong>Not reasonable to expect</strong>
+          <ul>
+            <li>Phonemes or articulation: no auditory cortex (STG) and no speech motor cortex recorded</li>
+            <li>Low-level visual detail: only 15 lingual-gyrus and 6 fusiform units</li>
+            <li>Verbatim word-by-word text: at best meaning, not wording</li>
+            <li>Anything that needs intent or effort: viewing was passive</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <div class="rules">
+      <div class="rule"><span class="src you">Your point 1</span><h3>Passive viewing</h3><p>There is no produced behaviour to decode. A "brain-to-text" project here decodes what was <em>seen, heard and understood</em>, like Tang 2023 or mind captioning, not what the patient tried to say, like Willett or Card.</p></div>
+      <div class="rule"><span class="src you">Your point 2</span><h3>Only medial temporal lobe</h3><p>Amygdala, hippocampus, entorhinal and parahippocampal cortex cover 96% of units. These are memory and concept structures, so projects should target concepts, scenes, events and meaning.</p></div>
+      <div class="rule"><span class="src you">Your point 3</span><h3>29 patients, but no shared neurons</h3><p>Each patient contributes a different, unordered set of 30–137 units. What they do share is the stimulus clock: all 29 watched the same 118,162 analysed frames. That makes hyperalignment and shared latent spaces possible, which is the setup MindEye2 and Tang &amp; Huth 2025 rely on.</p></div>
+      <div class="rule"><span class="src you">Your point 4</span><h3>Invasive and new, so reproductions are cheap wins</h3><p>fMRI, MEG and ECoG movie studies have established analyses (intersubject correlation, event HMMs, identity RSA, CLIP alignment) that nobody has run on continuous human single-unit data.</p></div>
+      <div class="rule"><span class="src found">Found · dataset</span><h3>Spike times only, no field potentials</h3><p>The NWB files hold spike times and mean waveforms, with no local field potentials or iEEG. That rules out ripples, theta phase and broadband power, including the 2025 movie-ripple results.</p></div>
+      <div class="rule"><span class="src found">Found · dataset</span><h3>German dub, no transcript</h3><p>Patients heard the German dub with no subtitles. The only speech labels are <span class="num">tom-speaking</span> and <span class="num">summer-speaking</span>. Any language model feature needs a transcript built from the DVD audio (for example with WhisperX), then checked by hand. NNDb's English word timings for this film help, but come from a different release and language.</p></div>
+      <div class="rule"><span class="src you">Found · resolved, DVD will be bought</span><h3>The movie isn't included</h3><p>Frames and audio are not distributed. With the Cine Project 2010 DVD (EAN 4010232049162) and the repo's <span class="num">movie_wrapper</span>, you can rebuild the exact 125,743 frames. That unlocks every idea using CLIP, a vision-language model, audio or a transcript.</p></div>
+      <div class="rule"><span class="src found">Found · paper + eLife review</span><h3>One viewing, strong autocorrelation</h3><p>With no repeated trials, there is no noise ceiling. Without temporal gaps between training and test data, label decoding inflates to κ≈0.99, so use the 32 s buffers throughout. Per-patient decoding was weak and variable; the headline results pool all patients.</p></div>
+      <div class="rule"><span class="src found">Found · paper</span><h3>The cast was deliberately unfamiliar</h3><p>The film was chosen because German audiences didn't know the actors. Few classic concept cells for characters are likely (45 units for Tom, 38 for Summer), but patients meet the characters during the recording, so learning is observable.</p></div>
+      <div class="rule"><span class="src found">Found · baselines</span><h3>Numbers to beat</h3><p>LSTM on the pooled population, Cohen's κ: persons <span class="num">0.36</span>, indoor/outdoor <span class="num">0.31</span>, characters <span class="num">0.23–0.32</span>, cuts <span class="num">0.18–0.20</span>. The best 500 units reach <span class="num">0.38</span> for Summer.</p></div>
+    </div>
+  </section>
+
+  <section id="decisions">
+    <div class="sec-head">
+      <span class="label">Your answers</span>
+      <h2>Decisions so far</h2>
+    </div>
+    <div class="rules">
+      <div class="rule"><span class="src you">Scope</span><h3>A course project that starts a thesis</h3><p>A large scope is fine, so the long shots stay in play as later options rather than being ruled out. The roadmap below is paced for that.</p></div>
+      <div class="rule"><span class="src you">Movie</span><h3>The DVD will be bought</h3><p>Captions, CLIP alignment, audio and transcript ideas are all feasible. The biggest remaining cost is the German transcript: expect a few days of hand-correction after automatic transcription.</p></div>
+      <div class="rule"><span class="src you">Contribution</span><h3>Open to methods and findings alike</h3><p>Scores stay neutral between machine learning and neuroscience, and each roadmap phase lists what it offers for both.</p></div>
+      <div class="rule"><span class="src you">Authors</span><h3>Not in contact, reachable if needed</h3><p>Nothing in the roadmap needs them. Reach out only to get field potentials (<a href="#idea-31" data-open="31">#31</a>), post-viewing rest or sleep (<a href="#idea-29" data-open="29">#29</a>), or the 17 sessions excluded for playback problems (more data for <a href="#idea-11" data-open="11">#11</a> and <a href="#idea-14" data-open="14">#14</a>). A short note before you publish is still courteous, in case they're working on the same question.</p></div>
+    </div>
+  </section>
+
+  <section id="shortlist">
+    <div class="sec-head">
+      <span class="label">My recommendation · thesis-scale</span>
+      <h2>Roadmap</h2>
+      <p class="prose muted">With a large scope and the DVD available, this is a phased plan rather than a single pick. The phases are ordered because each builds what the next depends on, and each lists a machine-learning angle and a neuroscience angle.</p>
+    </div>
+    <div class="picks">
+      <div class="pick"><div class="which"><span>Phase 0</span><span class="muted">Weeks 1–4</span></div><div>
+        <h3>Groundwork</h3>
+        <p>Rebuild the exact frames with <span class="num">movie_wrapper</span>. Transcribe the German track with WhisperX and hand-correct it, cross-checking against NNDb's English word timings. Extract CLIP, audio and text features per 80 ms bin, and freeze splits with 32 s buffers. Reproduce the published κ values and the cut responses (<a href="#idea-24" data-open="24">#24</a>) as a sanity check.</p>
+        <p class="muted">Output: one feature store that every later phase reuses, which is also the core of a benchmark (<a href="#idea-16" data-open="16">#16</a>).</p>
+      </div></div>
+      <div class="pick"><div class="which"><span>Phase 1</span><span class="muted">Months 1–2</span></div><div>
+        <h3>One shared space for 29 brains</h3>
+        <p>Align patients through the movie timeline and decode a held-out patient (<a href="#idea-9" data-open="9">#9</a>). Then measure how many minutes of viewing a new patient needs (<a href="#idea-10" data-open="10">#10</a>). In parallel, map neurons to CLIP embeddings and retrieve held-out frames (<a href="#idea-2" data-open="2">#2</a>).</p>
+        <p class="muted">For ML: cross-patient calibration for BCIs. For neuroscience: how much MTL coding is shared between people. Quick wins that fit alongside: <a href="#idea-6" data-open="6">#6</a>, <a href="#idea-13" data-open="13">#13</a>, <a href="#idea-14" data-open="14">#14</a>, <a href="#idea-19" data-open="19">#19</a>.</p>
+      </div></div>
+      <div class="pick"><div class="which"><span>Phase 2</span><span class="muted">Months 2–5</span></div><div>
+        <h3>From embeddings to text</h3>
+        <p>Generate scene captions from the shared space (<a href="#idea-1" data-open="1">#1</a>), with language-prior and shuffled-neuron controls. Fit contextual LLM encoding models on the dialogue (<a href="#idea-4" data-open="4">#4</a>). That result tells you whether the dialogue route in phase 3 is worth taking.</p>
+        <p class="muted">For ML: open-vocabulary text from single neurons during passive viewing. For neuroscience: whether MTL neurons carry contextual word meaning in a film, not just a podcast.</p>
+      </div></div>
+      <div class="pick"><div class="which"><span>Phase 3</span><span class="muted">Month 5 onward</span></div><div>
+        <h3>Choose the thesis direction</h3>
+        <p>Let phase 2 decide. If <a href="#idea-4" data-open="4">#4</a> finds a dialogue signal, go for dialogue retrieval (<a href="#idea-3" data-open="3">#3</a>) and name mentions (<a href="#idea-7" data-open="7">#7</a>). If scene meaning dominates, build a spike-token model across patients (<a href="#idea-11" data-open="11">#11</a>) and extend it to other human datasets (<a href="#idea-8" data-open="8">#8</a>). For a neuroscience thesis, take the nonlinear story (<a href="#idea-23" data-open="23">#23</a>) or the fMRI ↔ spikes bridge on the same film (<a href="#idea-22" data-open="22">#22</a>).</p>
+      </div></div>
+    </div>
+  </section>
+
+  <section id="matrix">
+    <div class="sec-head">
+      <span class="label">Comparison</span>
+      <h2>Fit with brain-to-text × feasibility</h2>
+      <p class="prose muted">Each chip is one idea, colored by my verdict; click it to open the idea's details. The shaded corner (fit ≥ 4, feasibility ≥ 4) is where I'd look first.</p>
+    </div>
+    <div class="legend" id="vlegend"></div>
+    <div class="matrix-wrap"><div class="matrix" id="mx" role="group" aria-label="Ideas by fit and feasibility"></div></div>
+    <div class="axis-note"><span>↑ fit with brain-to-text / BCI focus (1–5)</span><span>→ feasibility on SUMMER as released (1–5)</span></div>
+  </section>
+
+  <section id="ideas">
+    <div class="sec-head">
+      <span class="label">Recall over precision</span>
+      <h2>All 31 ideas</h2>
+      <p class="prose muted">Includes the ones I would not do, each with the reason. Scores are my judgement on 1–5 scales. <em>Null risk</em> is the chance the signal simply isn't in MTL spikes (higher is worse).</p>
+    </div>
+    <div class="controls">
+      <div class="seg" id="trackseg" role="group" aria-label="Filter by track"></div>
+      <label for="sortsel">Sort <select id="sortsel">
+        <option value="rec">My ranking</option>
+        <option value="fit">Brain-to-text fit</option>
+        <option value="feas">Feasibility</option>
+        <option value="nov">Novelty</option>
+        <option value="risk">Lowest null risk</option>
+      </select></label>
+      <label for="noextra"><input type="checkbox" id="noextra"> No new labels or outside data</label>
+      <label for="hideskip"><input type="checkbox" id="hideskip"> Hide skips</label>
+      <span class="count" id="count"></span>
+    </div>
+    <div class="ideas">
+      <div class="ihead" aria-hidden="true"><span>#</span><span>Idea</span><span>Fit</span><span>Feasible</span><span>Novel</span><span>Null risk</span><span>Effort</span><span>Verdict</span></div>
+      <div id="ilist"></div>
+    </div>
+  </section>
+
+  <section id="papers">
+    <div class="sec-head">
+      <span class="label">Literature</span>
+      <h2>Reading list</h2>
+      <p class="prose muted">Each entry says what the paper did and why it matters for a SUMMER project. <em>Used in</em> links back to the ideas that build on it.</p>
+    </div>
+    <div id="plist"></div>
+  </section>
+
+  <footer>
+    Summaries come from abstracts, publisher pages and search digests collected on 13 Sep 2026, plus a full read of the SUMMER paper. Check details against the PDF before citing. Scores and verdicts are my own opinion, meant to start a discussion rather than settle it.
+  </footer>
+</div>
+
+<script>
+const REGIONS=[["Amygdala",559,303],["Entorhinal cortex",493,268],["Anterior hippocampus",418,218],["Posterior hippocampus",412,216],["Parahippocampal cortex",293,135],["Piriform cortex",68,31],["Middle hippocampus",16,7],["Lingual gyrus",15,6],["Fusiform gyrus",6,3],["Perirhinal cortex",6,3]];
+
+const TRACKS={text:"Brain → text",shared:"Shared space & drift",repro:"Quick reproductions",mem:"Memory, narrative, affect",methods:"Methods & benchmarks"};
+const VERDICTS={top:["Top pick","v-top"],quick:["Quick win","v-quick"],solid:["Solid","v-solid"],long:["Long shot","v-long"],skip:["Skip","v-skip"]};
+
+const P=[
+ // dataset & same film
+ {id:"summer",g:"film",t:"Human neuron activity during an 83-minute movie from 2,286 neurons and 29 patients",v:"Darcher, Gerken et al. · Scientific Data 2026",u:"https://www.nature.com/articles/s41597-026-07955-0",d:"The SUMMER descriptor: MTL units from 29 patients watching the whole German-dubbed film, 53 frame-wise labels, NWB files on DANDI. Validation found 195 units responsive to camera cuts (mostly parahippocampal) and 45 to Tom and 38 to Summer (mostly amygdala), plus LSTM decoding of labels.",w:"Sets the rules (32 s buffers, 80 ms bins, pooled pseudo-populations) and the baselines. Just as useful for what it lacks: no transcript, only two speech labels, spikes only."},
+ {id:"gerken",g:"film",t:"Decoding movie content from neuronal population activity in the human medial temporal lobe",v:"Gerken, Darcher et al. · eLife reviewed preprint 2025",u:"https://elifesciences.org/reviewed-preprints/106758",d:"LSTM decoders on the pooled population: persons κ 0.36, indoor/outdoor 0.31, characters 0.23–0.32, cuts 0.18–0.20. The amygdala was best for characters and PHC for transitions; about 500 selected units matched the full set. Without temporal gaps, performance inflated to about 0.99.",w:"All of this work decodes visual labels. The reviewers flagged weak single-patient decoding, unfamiliar actors and unanalysed audio. Each is an opening for a new project."},
+ {id:"repo",g:"film",t:"mormannlab/SUMMER: code for the dataset",v:"GitHub",u:"https://github.com/mormannlab/SUMMER",d:"Data loaders, a movie_wrapper that rebuilds the exact stimulus from the Cine Project DVD, and a PyTorch Lightning framework with two tasks: next-bin spike prediction and frame-label classification.",w:"Free baselines, and the only route to frame-exact video and audio for embedding-based ideas."},
+ {id:"nndb",g:"film",t:"A naturalistic neuroimaging database for understanding the brain using ecological stimuli (NNDb)",v:"Aliko, Huang, Gheorghiu, Meliss & Skipper · Scientific Data 2020",u:"https://www.nature.com/articles/s41597-020-00680-2",d:"fMRI of 86 people, each watching one of 10 full films; 20 watched 500 Days of Summer. It includes word timings made with Amazon Transcribe and aligned to the DVD subtitles by dynamic time warping, plus face annotations.",w:"The same film recorded with a different method, across the whole brain. Its English word timings are a head start on a transcript but need re-alignment: it's a different DVD release, and the German dub uses different words."},
+ {id:"grall",g:"film",t:"Neural unscrambling of temporal information during a nonlinear narrative",v:"Grall, Equita & Finn · Cerebral Cortex 2023",u:"https://academic.oup.com/cercor/article/33/11/7001/7031158",d:"Using the NNDb fMRI of 500 Days of Summer, precuneus and posterior cingulate patterns followed the story's chronology (day number) rather than the order scenes appear. Large time jumps evoked a distinct signature.",w:"A hypothesis that only exists for this film, ready to test at single-neuron resolution in the hippocampus."},
+ {id:"lally",g:"film",t:"Neural representations of naturalistic person identities while watching a feature film",v:"Lally, Lavan, Garrido, Tsantani & McGettigan · Imaging Neuroscience 2023",u:"https://direct.mit.edu/imag/article/doi/10.1162/imag_a_00009/117119/Neural-representations-of-naturalistic-person",d:"Representational similarity analysis on movie fMRI. Face and voice areas grouped instances of the same person together and separated different people; faces drove more of it than voices.",w:"Directly reproducible with SUMMER's character, face and speaking labels."},
+ // language
+ {id:"franch",g:"lang",t:"A vectorial code for semantics in human hippocampus",v:"Franch, Mickiewicz, Belanger et al. · bioRxiv 2025",u:"https://pmc.ncbi.nlm.nih.gov/articles/PMC11870593/",d:"Hundreds of hippocampal neurons recorded while patients listened to narrative speech. Population distance tracked semantic distance from contextual models (BERT, GPT-2) but not from static word2vec, and response variability grew with word polysemy.",w:"The strongest evidence that MTL spikes carry LLM-like word meaning during passive listening, which is exactly SUMMER's situation."},
+ {id:"attn",g:"lang",t:"Attention is all you need (in the brain): semantic contextualization in human hippocampus",v:"bioRxiv 2025",u:"https://www.biorxiv.org/content/10.1101/2025.06.23.661103v3",d:"Hippocampal responses to a word reflected its own embedding plus a weighted sum of the preceding words, with weights that correlated with LLM self-attention. Neurons also coded a word's position within its clause.",w:"A concrete encoding model to fit on SUMMER's dialogue once it is transcribed."},
+ {id:"jamali",g:"lang",t:"Semantic encoding during language comprehension at single-cell resolution",v:"Jamali et al. · Nature 2024",u:"https://www.nature.com/articles/s41586-024-07643-2",d:"Left prefrontal single neurons recorded during sentences and stories. Cells were selective for word-meaning categories, updated by context, and distinguished words from nonwords.",w:"The reference method for semantic tuning in single units. Note that it recorded prefrontal cortex, not MTL."},
+ {id:"dijk",g:"lang",t:"Pronouns reactivate conceptual representations in human hippocampal neurons",v:"Dijksterhuis, Self et al. · Science 2024",u:"https://www.science.org/doi/10.1126/science.adr2813",d:"During reading, hippocampal cells selective for a noun fired again when a later pronoun referred back to it.",w:"Suggests that dialogue mentioning a character may reactivate that character's neurons. This is the basis of idea #7."},
+ {id:"qq09",g:"lang",t:"Explicit encoding of multimodal percepts by single neurons in the human brain",v:"Quian Quiroga, Kraskov, Koch & Fried · Current Biology 2009",u:"https://www.sciencedirect.com/science/article/pii/S0960982209013773",d:"MTL neurons responded to the same person's picture, written name and spoken name.",w:"Explains why voice-only or name-only moments in the film could still drive character neurons (ideas #6, #7)."},
+ {id:"karkowski",g:"lang",t:"Semantic tuning of single neurons in the human medial temporal lobe",v:"Karkowski et al. · bioRxiv 2025",u:"https://www.biorxiv.org/content/10.1101/2025.10.21.682935v1",d:"2,835 MTL neurons tested with THINGS images and word2vec embeddings. A closed-loop paradigm picked new stimuli at controlled semantic distances within the same session.",w:"Methods for relating MTL tuning to embedding spaces, from the same Bonn group."},
+ {id:"leonard",g:"lang",t:"Large-scale single-neuron speech sound encoding across the depth of human cortex",v:"Leonard, Gwilliams … Chang · Nature 2024",u:"https://www.nature.com/articles/s41586-023-06839-2",d:"Neuropixels recordings of 685 neurons in the superior temporal gyrus, coding consonant and vowel features, pitch, onsets and the amplitude envelope.",w:"The contrast case: acoustic and phonetic speech coding lives in the superior temporal gyrus, which SUMMER doesn't record. Don't plan on decoding phonemes."},
+ {id:"rutidata",g:"lang",t:"Single-neuron datasets for linguistic and semantic processing in the human amygdala and hippocampus",v:"Scientific Data 2025",u:"https://www.nature.com/articles/s41597-025-05839-3",d:"Open single-unit data from the human amygdala and hippocampus, recorded during language and semantic tasks.",w:"A candidate second dataset for cross-task transfer or pretraining on the same brain regions (idea #8)."},
+ {id:"review26",g:"lang",t:"20 years of concept cells: from invariant responses to a unique coding of human memory",v:"Neuron 2026 (review)",u:"https://www.cell.com/neuron/abstract/S0896-6273(26)00051-6",d:"A review of concept cells, from the first invariant responses to their role in memory coding.",w:"The fastest way for the group to learn what MTL neurons are known to encode."},
+ {id:"context25",g:"lang",t:"Lack of context modulation in human single neuron responses in the medial temporal lobe",v:"2025 · open access",u:"https://pmc.ncbi.nlm.nih.gov/articles/PMC11781864/",d:"Neurons responding to a person or place kept the same response across different stories: 97% during encoding and 100% during recall.",w:"A warning for narrative-state ideas (#23, #27): single concept cells may ignore context, so look for it at the population level."},
+ // brain-to-text
+ {id:"tang23",g:"b2t",t:"Semantic reconstruction of continuous language from non-invasive brain recordings",v:"Tang, LeBel, Jain & Huth · Nature Neuroscience 2023",u:"https://www.nature.com/articles/s41593-023-01304-9",d:"An fMRI decoder guided a GPT language model to reconstruct the gist of stories people heard, imagined speech, and even silent films. It needed the subject's cooperation.",w:"Gist-level rather than word-level output is the realistic target for passive MTL too. The silent-film result shows visual narrative can be decoded into language."},
+ {id:"tang25",g:"b2t",t:"Semantic language decoding across participants and stimulus modalities",v:"Tang & Huth · Current Biology 2025",u:"https://www.cell.com/current-biology/fulltext/S0960-9822(25)00054-5",d:"Decoders trained on reference participants were transferred to a new person through functional alignment. Aligning with movie responses worked about as well as aligning with stories.",w:"Exactly the SUMMER setup: use the shared film to align a new patient, then transfer a semantic decoder (ideas #9, #10)."},
+ {id:"horikawa",g:"b2t",t:"Mind captioning: evolving descriptive text of mental content from human brain activity",v:"Horikawa · Science Advances 2025",u:"https://www.science.org/doi/10.1126/sciadv.adw1464",d:"fMRI recorded while people watched 2,180 silent clips was decoded linearly into language-model features of the clips' captions. Iterative text optimisation then produced descriptions, including for videos people only recalled.",w:"The template for idea #1: decode into caption embeddings first, then generate text."},
+ {id:"neurrator",g:"b2t",t:"Can neurons speak? Semantic narration of vision at single-cell resolution",v:"Marin-Llobet, Hakim, Matias, Murthy, Li & Ba · arXiv 2026",u:"https://arxiv.org/abs/2606.18667",d:"Neuropixels spikes from mouse visual cortex during natural movies were mapped into CLIP's patch-embedding space, then narrated by a multimodal LLM with no language-side training. Fidelity scaled with population size.",w:"The closest existing template for text from single neurons during a movie. Our version swaps mouse visual cortex for human MTL."},
+ {id:"defossez",g:"b2t",t:"Decoding speech perception from non-invasive brain recordings",v:"Défossez, Caucheteux, Rapin, Kabeli & King · Nature Machine Intelligence 2023",u:"https://www.nature.com/articles/s42256-023-00714-5",d:"A contrastive brain module aligned to wav2vec 2.0 across 175 M/EEG participants, sharing weights except for one subject-specific layer. From 3 s of MEG it identified the heard segment among more than 1,000 with up to 41% accuracy.",w:"The template for idea #3. Its subject-specific layer is a ready design for handling 29 patients."},
+ {id:"benchetrit",g:"b2t",t:"Brain decoding: toward real-time reconstruction of visual perception",v:"Benchetrit, Banville & King · ICLR 2024",u:"https://arxiv.org/abs/2310.19812",d:"MEG was aligned to pretrained image embeddings (CLIP and others) for retrieval and image generation at around 250 ms latency.",w:"The retrieval step of idea #2, on a fast signal."},
+ {id:"mindeye2",g:"b2t",t:"MindEye2: shared-subject models enable fMRI-to-image with 1 hour of data",v:"Scotti et al. · ICML 2024",u:"https://arxiv.org/abs/2403.11207",d:"Each subject gets a linear map into a shared latent space, followed by a shared nonlinear map to CLIP. After pretraining on 7 subjects, one hour of data is enough for a new subject.",w:"An architecture to copy for ideas #9 and #10."},
+ {id:"goldstein",g:"b2t",t:"Shared computational principles for language processing in humans and deep language models",v:"Goldstein et al. · Nature Neuroscience 2022",u:"https://www.ncbi.nlm.nih.gov/pmc/articles/PMC8904253/",d:"ECoG recorded during a 30-minute podcast showed next-word prediction before word onset, surprise after it, and contextual embeddings, all mirroring GPT-2.",w:"The analysis recipe for ideas #4 and #5, applied to dialogue."},
+ {id:"spurious",g:"b2t",t:"Spurious reconstruction from brain activity",v:"Shirakawa et al. · arXiv 2024",u:"https://arxiv.org/abs/2405.10078",d:"Shows how fMRI reconstructions can look convincing because of generative priors and train/test overlap rather than information from the brain.",w:"Required controls for any text generator here: language-prior baselines and shuffled neural input."},
+ {id:"scaling",g:"b2t",t:"Scaling laws for decoding images from brain activity",v:"Banville et al. · arXiv 2025",u:"https://arxiv.org/abs/2501.15322",d:"Measures how decoding improves with more recording time and more subjects across non-invasive modalities.",w:"The template for idea #14, with neurons, patients and minutes as the axes."},
+ {id:"willett",g:"b2t",t:"A high-performance speech neuroprosthesis",v:"Willett et al. · Nature 2023",u:"https://pubmed.ncbi.nlm.nih.gov/37612500/",d:"Intracortical arrays in speech motor cortex decoded attempted speech at 23.8% word error rate on a 125,000-word vocabulary.",w:"The group's home turf, but it depends on motor cortex and attempted speech, which SUMMER can't offer. Its decoding machinery (CTC, language-model rescoring) still carries over."},
+ {id:"card",g:"b2t",t:"An accurate and rapidly calibrating speech neuroprosthesis · Brain-to-Text '25",v:"Card et al. · NEJM 2024 · Kaggle competition 2025",u:"https://www.kaggle.com/competitions/brain-to-text-25",d:"256 electrodes in speech motor cortex over 45 sessions. The data became the Brain-to-Text '25 benchmark, where top entries reached under 2% word error rate.",w:"Shows how calibration and session drift are handled in production BCIs, which is directly relevant to ideas #10 and #13."},
+ {id:"kunz",g:"b2t",t:"Inner speech in motor cortex and implications for speech neuroprostheses",v:"Kunz, Abramovich Krasa, Willett et al. · Cell 2025",u:"https://www.cell.com/cell/fulltext/S0092-8674(25)00681-6",d:"Inner speech was decodable from motor cortex and correlated with attempted speech, separated by a motor-intent dimension.",w:"Shows how far text BCIs have moved from overt effort. It still needs motor cortex, a useful contrast when you pitch passive MTL decoding."},
+ // shared space / foundation
+ {id:"haxby",g:"shared",t:"A common, high-dimensional model of the representational space in human ventral temporal cortex (hyperalignment)",v:"Haxby et al. · Neuron 2011",u:"https://www.sciencedirect.com/science/article/pii/S0896627311007811",d:"A common space was derived from responses to a movie. Decoding across subjects in that space matched decoding within a subject.",w:"The movie itself serves as the alignment stimulus, and SUMMER provides 29 brains watching the same one."},
+ {id:"gallego",g:"shared",t:"Long-term stability of cortical population dynamics underlying consistent behavior",v:"Gallego et al. · Nature Neuroscience 2020",u:"https://www.nature.com/articles/s41593-019-0555-4",d:"PCA followed by CCA aligned latent dynamics across up to two years of recordings, despite turnover in the recorded neurons.",w:"A simple recipe for aligning patients who share no neurons. Try it first."},
+ {id:"lfads",g:"shared",t:"Inferring single-trial neural population dynamics using sequential auto-encoders (LFADS)",v:"Pandarinath et al. · Nature Methods 2018",u:"https://www.nature.com/articles/s41592-018-0109-9",d:"Dynamic neural stitching: one dynamical model learned from non-overlapping recording sessions.",w:"Early proof that different neurons can share one latent model, which is the premise of idea #11."},
+ {id:"poyo",g:"shared",t:"A unified, scalable framework for neural population decoding (POYO)",v:"Azabou et al. · NeurIPS 2023",u:"https://arxiv.org/abs/2310.16046",d:"Each spike is a token and each unit gets a learned embedding, processed with a PerceiverIO backbone. Trained on 27,373 units from 7 monkeys, it fine-tunes quickly to new sessions.",w:"Handles unordered, non-corresponding units natively (ideas #11, #12)."},
+ {id:"mtm",g:"shared",t:"Towards a “universal translator” for neural dynamics at single-cell, single-spike resolution",v:"Zhang et al. · NeurIPS 2024",u:"https://arxiv.org/abs/2407.14668",d:"Multi-task masking self-supervision across 48 mice from the IBL repeated-site dataset improves generalisation to unseen animals.",w:"A self-supervised objective that fits 83 minutes of mostly unlabeled movie time."},
+ {id:"ndt3",g:"shared",t:"A generalist intracortical motor decoder (NDT3)",v:"Ye et al. · NeurIPS 2025",u:"https://www.biorxiv.org/content/10.1101/2025.02.02.634313v1",d:"An autoregressive transformer pretrained on 2,000 hours of spiking from 30+ monkeys and humans, benefiting 8 downstream tasks.",w:"A scale reference. The gains come from data volume, and SUMMER's roughly 40 patient-hours is small, so keep expectations modest."},
+ {id:"spint",g:"shared",t:"SPINT: spatial permutation-invariant neural transformer for consistent intracortical motor decoding",v:"arXiv 2025",u:"https://arxiv.org/abs/2507.08402",d:"A transformer whose output doesn't depend on unit order, built to decode consistently across sessions whose recorded units don't line up.",w:"The right inductive bias for SUMMER, whose units have no order or correspondence across patients."},
+ {id:"cebra",g:"shared",t:"Learnable latent embeddings for joint behavioural and neural analysis (CEBRA)",v:"Schneider, Lee & Mathis · Nature 2023",u:"https://www.nature.com/articles/s41586-023-06031-6",d:"Contrastive embeddings conditioned on time or behaviour. They decoded natural-movie frames from mouse visual cortex at over 95% accuracy and were consistent across subjects.",w:"An off-the-shelf quick win: frame identification from human MTL (idea #19)."},
+ {id:"popt",g:"shared",t:"Population Transformer: learning population-level representations of neural activity",v:"Chau et al. · ICLR 2025",u:"https://arxiv.org/abs/2406.03044",d:"Self-supervised aggregation over arbitrary, sparse channel sets. It reduces the data needed for decoding, including on held-out subjects.",w:"Built for movie-watching intracranial data; its aggregation idea transfers to sets of units."},
+ {id:"treebank",g:"shared",t:"Brain Treebank: large-scale intracranial recordings from naturalistic language stimuli",v:"Wang et al. · NeurIPS 2024 Datasets & Benchmarks",u:"https://arxiv.org/abs/2411.08343",d:"sEEG from 10 patients over 26 Hollywood films: 43 hours and 223,000 words, with hand-corrected word onsets and dependency parses.",w:"The closest passive-movie language dataset with invasive recordings. The signal differs (field potentials, not spikes), but its annotation pipeline is the model for building SUMMER's transcript."},
+ {id:"neuroprobe",g:"shared",t:"Neuroprobe: evaluating intracranial brain responses to naturalistic stimuli",v:"arXiv 2025",u:"https://arxiv.org/abs/2509.21671",d:"A suite of decoding tasks built on Brain Treebank, comparing BrainBERT and Population Transformer within and across sessions.",w:"A blueprint for a SUMMER benchmark (idea #16)."},
+ // movies & memory
+ {id:"hasson04",g:"movies",t:"Intersubject synchronization of cortical activity during natural vision",v:"Hasson et al. · Science 2004",u:"https://doi.org/10.1126/science.1089506",d:"Free movie viewing produced time courses that were strongly correlated across brains: intersubject correlation (ISC).",w:"Never done with human single-unit populations across 29 people (idea #17)."},
+ {id:"baldassano",g:"movies",t:"Discovering event structure in continuous narrative perception and memory",v:"Baldassano et al. · Neuron 2017",u:"https://www.sciencedirect.com/science/article/pii/S0896627317305937",d:"A hidden Markov model found event boundaries as shifts between stable activity patterns, revealing a hierarchy of short to long events across cortex. Hippocampal activity at boundaries predicted later recall.",w:"Runs as-is on binned spikes; compare its boundaries to the scene-cut labels (idea #18)."},
+ {id:"chen17",g:"movies",t:"Shared memories reveal shared structure in neural activity across individuals",v:"Chen et al. · Nature Neuroscience 2017",u:"https://www.nature.com/articles/nn.4450",d:"People watched a Sherlock episode, then recalled it aloud. Event-specific patterns were reinstated during recall and were similar across people.",w:"Evidence that event structure is shared between brains, which supports ideas #9 and #17."},
+ {id:"zheng22",g:"movies",t:"Neurons detect cognitive boundaries to structure episodic memories in humans",v:"Zheng et al. · Nature Neuroscience 2022",u:"https://www.nature.com/articles/s41593-022-01020-w",d:"MTL boundary cells responded to soft (within-clip) and hard (between-clip) boundaries in short video clips and predicted later memory.",w:"The SUMMER paper already partly reproduces this, so it's a warm-up rather than a project (idea #24)."},
+ {id:"keles24",g:"movies",t:"Multimodal single-neuron, intracranial EEG, and fMRI brain responses during movie watching in human patients",v:"Keles, Dubois, Adolphs, Rutishauser et al. · Scientific Data 2024",u:"https://www.nature.com/articles/s41597-024-03029-1",d:"20 patients and 1,450 neurons (amygdala, hippocampus, medial frontal) watching an 8-minute Hitchcock episode, with iEEG, fMRI, eye tracking and a recognition memory test (DANDI 000623).",w:"A second human single-unit movie dataset: test whether SUMMER-trained models transfer. It also has memory behaviour and field potentials, which SUMMER lacks."},
+ {id:"ripples25",g:"movies",t:"Movie-watching evokes ripple-like activity within events and at event boundaries",v:"Nature Communications 2025",u:"https://www.nature.com/articles/s41467-025-60788-0",d:"iEEG from 10 patients: hippocampal ripples increased at event boundaries and predicted which events were remembered.",w:"Would be an ideal reproduction, but it needs field potentials, which SUMMER doesn't release. Listed so no one spends time on it (idea #31)."},
+ {id:"gelbard08",g:"movies",t:"Internally generated reactivation of single neurons in human hippocampus during free recall",v:"Gelbard-Sagiv, Mukamel, Harel, Malach & Fried · Science 2008",u:"https://www.science.org/doi/10.1126/science.1164685",d:"Neurons selective for particular clips while watching fired again seconds before patients spontaneously recalled those clips.",w:"SUMMER has no recall phase. Worth asking the authors whether one was ever recorded."},
+ {id:"tacikowski24",g:"movies",t:"Human hippocampal and entorhinal neurons encode the temporal structure of experience",v:"Tacikowski … Fried · Nature 2024",u:"https://www.nature.com/articles/s41586-024-07973-1",d:"Without instructions, hippocampal and entorhinal neurons learned the graph structure of an image sequence, with time-compressed replay.",w:"Supports the idea that passive exposure builds structure, relevant to ideas #23 and #25."},
+ {id:"umbach20",g:"movies",t:"Time cells in the human hippocampus and entorhinal cortex support episodic memory",v:"Umbach et al. · PNAS 2020",u:"https://doi.org/10.1073/pnas.2013250117",d:"Human hippocampal and entorhinal neurons fired at specific elapsed times within trials, supporting temporal memory.",w:"Background for time and drift coding over the 79-minute analysis window (idea #13)."},
+ {id:"ison15",g:"movies",t:"Rapid encoding of new memories by individual neurons in the human brain",v:"Ison, Quian Quiroga & Fried · Neuron 2015",u:"https://www.cell.com/neuron/fulltext/S0896-6273(15)00559-0",d:"Single MTL neurons began coding arbitrary person–place pairings within a few exposures.",w:"Grounds idea #25 on learning the cast, and character × location pairings."},
+ {id:"mormann26",g:"movies",t:"Episodic memory consolidation by reactivation of human concept neurons during sleep reflects contents, not sequence of events",v:"Mormann et al. · bioRxiv 2026",u:"https://www.biorxiv.org/content/10.64898/2026.01.10.698827v1",d:"1,433 neurons from patients who learned a story. Concept neurons reactivated during slow-wave sleep, often together within ripples, but not in story order.",w:"Shows the Bonn group's current questions. SUMMER doesn't include post-movie sleep, so this is for context and possible collaboration."},
+ {id:"bausch26",g:"movies",t:"Distinct neuronal populations in the human brain combine content and context",v:"Bausch et al. · Nature 2026",u:"https://doi.org/10.1038/s41586-025-09910-2",d:"Cited by SUMMER; I only saw the title, so read it before relying on it.",w:"From the same lab and likely relevant to content × context analyses, such as character × location (ideas #25, #27)."},
+ {id:"algonauts",g:"movies",t:"The Algonauts Project 2025 challenge: how the human brain makes sense of multimodal movies",v:"Algonauts Project · arXiv 2025",u:"https://arxiv.org/abs/2501.00504",d:"About 80 hours of fMRI during Friends and full movies, with an out-of-distribution leaderboard for encoding models built on video, audio and text features.",w:"A reference pipeline for idea #21's multimodal encoding model."},
+ {id:"valence25",g:"movies",t:"Neural representation of emotional valence in human amygdala and surrounding regions",v:"bioRxiv 2025",u:"https://pmc.ncbi.nlm.nih.gov/articles/PMC13436427/",d:"Amygdala and hippocampal single neurons changed firing in ways that predicted subjective emotional valence.",w:"Makes idea #26 plausible, once the film has valence labels."}
+];
+const PGROUPS={film:"The dataset and the same film",lang:"Human single neurons and language",b2t:"Brain-to-text and perception decoding (other methods)",shared:"Cross-subject alignment and neural foundation models",movies:"Naturalistic movies, events and memory"};
+
+const I=[
+ {n:1,title:"Scene captions from spikes",tr:"text",fit:5,feas:4,nov:5,risk:3,eff:"2–3 months",needs:["DVD","VLM captions"],v:"top",
+  pitch:"Caption every 2–4 s clip of the film with a vision-language model. Embed the captions with a sentence encoder, then train a decoder from binned population activity to the caption embedding. Evaluate by retrieving the true caption among held-out clips, then generate text: iterative optimisation as in mind captioning, or a CLIP-to-LLM bridge as in NEURRATOR.",
+  why:"MTL codes who is present, where the scene is and what's happening, which is the level of detail a caption captures. It's brain-to-text without needing a transcript.",
+  risk:"Captions may mostly encode 'Tom in office', which the existing labels already capture. You must show value beyond the 53 labels, for example with a label-only baseline decoder.",
+  first:"Caption 2 s windows, embed them, then run ridge regression from pooled 80 ms counts to embeddings with 32 s buffers. Report top-k retrieval against a shuffled-time control.",refs:["horikawa","neurrator","tang23","spurious","gerken"]},
+ {n:2,title:"Spikes → CLIP embeddings, zero-shot frame retrieval",tr:"text",fit:4,feas:5,nov:4,risk:2,eff:"3–5 weeks",needs:["DVD"],v:"top",
+  pitch:"Contrastively align population activity with CLIP (or DINOv2 or SigLIP) frame embeddings. Test zero-shot retrieval of held-out frames and describe decoded embeddings with CLIP's text side. It's the visual stepping stone to idea #1.",
+  why:"Concept cells behave like multimodal embedding units, and characters and places are already decodable. Continuous embeddings reuse that signal without being limited to 53 labels.",
+  risk:"Low. Gains may come mostly from slow scene context, so compare against a 'same scene, different shot' retrieval set.",
+  first:"Extract CLIP embeddings per 80 ms bin, train an InfoNCE projection head on the pooled population, and report retrieval accuracy at chance-matched sizes.",refs:["benchetrit","mindeye2","cebra","neurrator","qq09"]},
+ {n:3,title:"Which line of dialogue was just heard?",tr:"text",fit:5,feas:3,nov:5,risk:4,eff:"2–4 months",needs:["DVD","Transcript"],v:"long",
+  pitch:"Build a word-aligned German transcript. Then train a Défossez-style contrastive model that picks the heard 3–5 s dialogue segment from thousands of candidates, using speech (wav2vec 2.0) or text (German LLM) embeddings as targets.",
+  why:"Hippocampal neurons track contextual word meaning during narrative speech (Franch 2025). It's the most literal brain-to-text framing available here.",
+  risk:"High. There's no auditory cortex, dialogue meaning is tangled with the visual scene, and each line is heard once. It needs vision-only controls: the same scene without speech, and speech over unrelated shots.",
+  first:"Transcribe with WhisperX, hand-correct 10 minutes, and check whether a text-embedding decoder beats a scene-embedding decoder on the same segments.",refs:["defossez","franch","attn","tang23","treebank"]},
+ {n:4,title:"Contextual LLM encoding model of the dialogue",tr:"text",fit:4,feas:4,nov:4,risk:3,eff:"1–2 months",needs:["DVD","Transcript"],v:"top",
+  pitch:"Predict each unit's firing from the words being heard using contextual (German LLM) versus static (fastText) embeddings. Control for visual CLIP features and acoustic envelope, and compare by region.",
+  why:"It directly tests Franch 2025 and the hippocampus attention paper, but in a naturalistic multimodal film instead of a podcast. A positive result justifies the text-decoding ideas.",
+  risk:"Medium. Speech overlaps with faces on screen, so partial out Tom/Summer faces and speaking labels.",
+  first:"Build the transcript, then fit banded ridge (vision / audio / static text / contextual text) and compare held-out prediction by region.",refs:["franch","attn","goldstein","jamali","algonauts"]},
+ {n:5,title:"Does the MTL track word surprisal?",tr:"text",fit:3,feas:4,nov:4,risk:4,eff:"4–6 weeks",needs:["DVD","Transcript"],v:"long",
+  pitch:"Relate population activity around word onsets to LLM surprisal and entropy, testing for prediction before onset and surprise after it.",
+  why:"These are the clearest shared computations between brains and LLMs in ECoG, and nobody has tested them in human MTL single units during a film.",
+  risk:"Prediction effects in ECoG come from language cortex. The MTL may show nothing, and dubbed German timing adds noise.",
+  first:"Align word onsets, compute surprisal with a German LLM, and run an onset-locked regression with a shuffled-surprisal control.",refs:["goldstein","franch"]},
+ {n:6,title:"Voice versus face: speaker identity across senses",tr:"text",fit:3,feas:5,nov:4,risk:3,eff:"2–4 weeks",needs:[],v:"quick",
+  pitch:"Use the existing labels to separate Summer speaking off-screen, Summer on-screen and silent, and both together (same for Tom). Train a character decoder on face-only moments and test it on voice-only moments.",
+  why:"Concept cells respond across modalities (Quian Quiroga 2009). Cross-modal transfer is a neat bridge between vision and language, and SUMMER's own work ignored audio.",
+  risk:"Off-screen speaking moments may be rare. Count them first. Also, the cast is unfamiliar.",
+  first:"Count label combinations, then run a cross-condition generalisation test with 32 s buffers and a permutation null.",refs:["qq09","lally","gerken"]},
+ {n:7,title:"Hearing a name reactivates character neurons",tr:"text",fit:4,feas:3,nov:5,risk:4,eff:"1–2 months",needs:["DVD","Transcript"],v:"long",
+  pitch:"Find moments when 'Summer', 'Tom' or a pronoun referring to them is spoken while the character is off-screen, and test whether character-tuned units fire.",
+  why:"It's the naturalistic version of the pronoun result (Dijksterhuis 2024) and the multimodal concept-cell result: language activating concepts.",
+  risk:"Few clean events, few character-tuned units (45 and 38), and resolving what pronouns refer to in German takes manual work.",
+  first:"Search the transcript for name mentions without a face on screen, then run a responsiveness test on character-selective units.",refs:["dijk","qq09","review26"]},
+ {n:8,title:"A shared semantic space across three human single-neuron datasets",tr:"text",fit:4,feas:2,nov:5,risk:4,eff:"4–6 months",needs:["Other datasets"],v:"long",
+  pitch:"Train one embedding-aligned model on SUMMER, the Keles 2024 Hitchcock movie dataset and the Rutishauser linguistic dataset. Test whether semantics learned from film transfer to word tasks.",
+  why:"The same regions are recorded in all three, and cross-dataset semantic transfer would be a real contribution toward language BCIs.",
+  risk:"Different tasks, labs and spike sorting. The data is heterogeneous and small, so it could become an engineering sink.",
+  first:"Harmonise binning and region labels, then test SUMMER-trained CLIP decoders on the Keles movie.",refs:["keles24","rutidata","poyo","popt"]},
+ {n:9,title:"Leave-one-patient-out decoding in a shared space",tr:"shared",fit:4,feas:5,nov:4,risk:2,eff:"3–5 weeks",needs:[],v:"top",
+  pitch:"Align all 29 patients into a common latent space using only the movie timeline (shared response model, hyperalignment, or PCA+CCA). Train label or embedding decoders on 28 patients and test on the held-out one.",
+  why:"This is the core cross-subject BCI problem, and SUMMER is unusually good for it: many patients, one identical long stimulus.",
+  risk:"Low. Per-patient populations are small (median 84 units), so the shared dimensionality will be low. That is a finding in itself.",
+  first:"Fit an SRM on the first 60% of the film, decode persons and indoor labels on the last 40% for a held-out patient, and compare against within-patient and pooled decoders.",refs:["haxby","gallego","tang25","mindeye2","chen17"]},
+ {n:10,title:"How many minutes of viewing does a new brain need?",tr:"shared",fit:5,feas:5,nov:4,risk:2,eff:"3–4 weeks",needs:[],v:"quick",
+  pitch:"Frame #9 as a calibration curve: decoding accuracy for a new patient against minutes of unlabeled movie used for alignment. Compare against training that patient's decoder from scratch.",
+  why:"Calibration time is the practical BCI bottleneck (MindEye2's 1 hour, Card 2024's fast calibration), and the answer is actionable for clinical systems.",
+  risk:"Low. It builds directly on #9.",
+  first:"Run #9 with alignment windows of 2, 5, 10, 20 and 40 minutes, each with 32 s buffers.",refs:["mindeye2","tang25","card","haxby"]},
+ {n:11,title:"Spike-token foundation model across all 29 patients",tr:"shared",fit:4,feas:3,nov:4,risk:3,eff:"3–5 months",needs:["Optional: other human DANDI data"],v:"solid",
+  pitch:"Pretrain a POYO or multi-task-masking model on SUMMER, with one learned embedding per unit and masked spike modelling. Evaluate on label and embedding decoding and on few-shot adaptation to held-out patients.",
+  why:"This is how motor BCIs now generalise across sessions, and nobody has done it for human MTL during naturalistic input.",
+  risk:"SUMMER is only about 40 patient-hours with 2,286 units, far smaller than NDT3's 2,000 hours. Gains over #9's linear alignment may be small.",
+  first:"Start from the repo's next-bin prediction task as the pretraining objective, then compare against #9's linear alignment baseline.",refs:["poyo","mtm","ndt3","spint","lfads","popt"]},
+ {n:12,title:"Unit embeddings as functional cell types",tr:"shared",fit:2,feas:4,nov:4,risk:3,eff:"1–2 months",needs:[],v:"solid",
+  pitch:"Learn a per-unit embedding (as in POYO) and test whether it clusters by region, pyramidal versus interneuron, or tuning to characters, cuts or places, which would give cell types that hold across patients.",
+  why:"Units can't be matched across patients, but their functional roles might be. That's useful for model design and for neuroscience.",
+  risk:"Clusters may only reflect firing rate. Control for rate and waveform width.",
+  first:"Fit a lightweight model with unit embeddings and probe them with linear classifiers for region and cell type.",refs:["poyo","summer"]},
+ {n:13,title:"Decoders age within one film (drift)",tr:"shared",fit:3,feas:5,nov:3,risk:2,eff:"2–3 weeks",needs:[],v:"quick",
+  pitch:"Train a decoder on one 10-minute window and test it at increasing time distances. Separate slow temporal-context drift from recording instability, and check whether scene boundaries reset it.",
+  why:"Nonstationarity is a central BCI problem, and the MTL is expected to drift by design (temporal context). This measures how much within 79 minutes.",
+  risk:"Low, but hard to interpret. Pauses were stitched out, and firing-rate drift from electrode changes looks like representational drift.",
+  first:"Plot population-vector similarity against time lag, and decoder κ against distance between training and test windows.",refs:["umbach20","gallego","card","tacikowski24"]},
+ {n:14,title:"Scaling laws: units × patients × minutes",tr:"methods",fit:3,feas:5,nov:3,risk:1,eff:"2–4 weeks",needs:[],v:"quick",
+  pitch:"Map decoding performance as a function of number of units, number of patients (holding units fixed) and minutes of training data, then extrapolate what a bigger study would buy.",
+  why:"Directly useful for planning future recordings, and it answers the eLife reviewers' question about single-patient versus pooled decoding.",
+  risk:"Low. Mostly a matter of careful resampling.",
+  first:"Subsample units and patients in the repo's LSTM or logistic baseline and fit power laws with bootstrap confidence intervals.",refs:["scaling","gerken"]},
+ {n:15,title:"What does pooling patients fake?",tr:"methods",fit:3,feas:5,nov:3,risk:1,eff:"2–3 weeks",needs:[],v:"solid",
+  pitch:"Compare pooled pseudo-population decoding with real simultaneously recorded populations of matched size. Quantify what shuffling away within-patient noise correlations does.",
+  why:"Every SUMMER result so far pools patients. Knowing the bias matters for any BCI claim.",
+  risk:"Low, but a modest contribution unless combined with #14.",
+  first:"Within patients, shuffle trials across time to break correlations and compare decoding against the intact data.",refs:["gerken","summer"]},
+ {n:16,title:"A leakage-safe SUMMER benchmark",tr:"methods",fit:3,feas:4,nov:3,risk:1,eff:"2–3 months",needs:["DVD (some tasks)"],v:"solid",
+  pitch:"Package tasks (labels, CLIP retrieval, caption retrieval, cross-patient transfer, next-bin forecasting) with fixed buffered splits and baselines: logistic regression, LSTM, CEBRA, POYO.",
+  why:"Neuroprobe and the Brain-to-Text benchmarks show that benchmarks attract community work, and datasets-and-benchmarks tracks exist for exactly this.",
+  risk:"Low scientific risk, but copyright limits what can ship. Distribute feature files, not frames.",
+  first:"Freeze splits, reproduce the published κ values, and add one embedding task.",refs:["neuroprobe","treebank","card","gerken"]},
+ {n:17,title:"Intersubject correlation of neuron populations",tr:"repro",fit:2,feas:5,nov:4,risk:2,eff:"2–3 weeks",needs:[],v:"quick",
+  pitch:"Compute leave-one-out intersubject correlation on population summaries (aligned PCs, or region mean rates) across the 29 patients, and find which movie moments synchronise brains: cuts, Summer on screen, emotional peaks.",
+  why:"A classic fMRI result that has never been run on human single-unit populations at this scale.",
+  risk:"Low. Single-unit rates are noisy, so smooth to around 1 s and use the aligned space from #9.",
+  first:"Time-resolved intersubject correlation, then regress it onto the 53 labels.",refs:["hasson04","chen17"]},
+ {n:18,title:"Event segmentation with a hidden Markov model",tr:"repro",fit:2,feas:5,nov:4,risk:2,eff:"3–4 weeks",needs:[],v:"quick",
+  pitch:"Fit the Baldassano event HMM to each region's population, compare the recovered boundaries with the scene-cut labels, and compare timescales across regions.",
+  why:"It reproduces a key fMRI finding in single neurons, and PHC and hippocampus already respond to cuts.",
+  risk:"Low. Deciding the number of events takes care; fit it on held-out patients.",
+  first:"Use BrainIAK's event segmentation on 1 s bins of aligned data and score boundary match against scene cuts.",refs:["baldassano","zheng22","summer"]},
+ {n:19,title:"CEBRA: movie-time embeddings and frame identification",tr:"repro",fit:3,feas:5,nov:3,risk:2,eff:"2–3 weeks",needs:[],v:"quick",
+  pitch:"Train CEBRA with time as the auxiliary variable, then decode movie position (which second of the film) from held-out data, within and across patients.",
+  why:"The CEBRA paper's headline result was mouse visual cortex; the human MTL version during a feature film is an easy, clear result.",
+  risk:"Autocorrelation makes position decoding trivially easy locally. Use 32 s buffers and report error in seconds.",
+  first:"Run CEBRA-Time and CEBRA-Behavior (using the labels) and measure cross-patient consistency.",refs:["cebra"]},
+ {n:20,title:"Identity RSA: grouping and separating characters",tr:"repro",fit:2,feas:5,nov:3,risk:2,eff:"2–3 weeks",needs:[],v:"solid",
+  pitch:"Replicate Lally 2023: are population patterns for different appearances of the same character more similar than those for different characters? Compare face-only, voice-only and combined moments.",
+  why:"It's an established fMRI analysis with ready labels, and it pairs naturally with idea #6.",
+  risk:"Low. Must control for scene context, because the same character often appears in the same place.",
+  first:"Build appearance-level pattern matrices with location regressed out and compare identity models.",refs:["lally","gerken"]},
+ {n:21,title:"Multimodal encoding model with variance partitioning",tr:"repro",fit:3,feas:4,nov:4,risk:2,eff:"1–2 months",needs:["DVD"],v:"solid",
+  pitch:"Predict each unit from video (VideoMAE/CLIP), audio (Whisper/wav2vec), text and the labels, then partition explained variance by modality and region.",
+  why:"This is the Algonauts recipe applied to single units, and the features it builds serve ideas #1–#5.",
+  risk:"Explained variance per unit will be small; single viewing gives no noise ceiling, so use split-half across similar scenes instead.",
+  first:"Extract features once, then fit banded ridge per unit and summarise by region.",refs:["algonauts","goldstein","gerken"]},
+ {n:22,title:"Same film, two methods: NNDb fMRI ↔ MTL spikes",tr:"repro",fit:2,feas:3,nov:5,risk:3,eff:"2–3 months",needs:["NNDb","Alignment across DVD releases"],v:"solid",
+  pitch:"Align the English NNDb fMRI timeline (20 viewers) with the German SUMMER timeline, then ask which cortical regions' shared responses best predict MTL population activity.",
+  why:"It may be the only feature film with both whole-brain fMRI and human single units. That's novel and a bridge across methods.",
+  risk:"Different languages and releases, hemodynamic lag and 1 s sampling. Alignment errors could erase the effect.",
+  first:"Align shots between releases using scene cuts, then correlate fMRI group-average responses with smoothed spike populations.",refs:["nndb","grall","hasson04"]},
+ {n:23,title:"Unscrambling the nonlinear story",tr:"mem",fit:2,feas:4,nov:5,risk:4,eff:"1–2 months",needs:["Day-number labels (manual)"],v:"long",
+  pitch:"Label each scene with its story day (1–500, shown on the day cards). Test whether hippocampal population similarity follows story chronology rather than the order scenes appear.",
+  why:"Grall & Finn found chronological coding in precuneus on this exact film, and the hippocampus codes time. No other dataset can ask this.",
+  risk:"The effect was found in medial parietal cortex, not the MTL, and it confounds with character, outfit and location continuity.",
+  first:"Transcribe the day cards into scene labels, then run a similarity analysis with location and character as nuisance regressors.",refs:["grall","umbach20","context25"]},
+ {n:24,title:"Boundary cells in a continuous film",tr:"repro",fit:1,feas:5,nov:2,risk:1,eff:"~2 weeks",needs:[],v:"skip",
+  pitch:"Classify units as responsive to soft boundaries (camera cuts) versus hard boundaries (scene cuts), following Zheng 2022.",
+  why:"Robust signal: 195 units respond to cuts.",
+  risk:"Largely done already in the SUMMER paper and the eLife preprint. Use it as a warm-up to learn the data, not as a project.",
+  first:"Reproduce the paper's cut responses as a data-loading sanity check.",refs:["zheng22","summer"]},
+ {n:25,title:"Learning the cast: tuning to new characters over the film",tr:"mem",fit:1,feas:4,nov:5,risk:4,eff:"1–2 months",needs:[],v:"long",
+  pitch:"Because the actors were unfamiliar, test whether selectivity for Tom, Summer and McKenzie emerges or sharpens from the first to the last third of the film.",
+  why:"Concept cells for new people and associations form fast (Ison 2015). Watching that happen during a naturalistic film would be striking.",
+  risk:"Confounds with narrative arc, drift and label frequency; minor characters have few appearances.",
+  first:"Compute character selectivity in early, middle and late windows with matched numbers of appearances.",refs:["ison15","tacikowski24","review26"]},
+ {n:26,title:"Amygdala and the film's emotional arc",tr:"mem",fit:1,feas:4,nov:4,risk:3,eff:"1–2 months",needs:["Valence labels"],v:"solid",
+  pitch:"Add valence and arousal labels per scene (rated by people or estimated with an LLM or music-and-audio model) and test amygdala population coding.",
+  why:"The amygdala is SUMMER's largest region (559 units) and codes valence in task settings.",
+  risk:"Labels are subjective and entangled with characters: Summer scenes are also emotional scenes.",
+  first:"Get scene-level valence ratings from 3 raters, then decode them with character regressed out.",refs:["valence25","gerken"]},
+ {n:27,title:"Decoding the state of the Tom–Summer relationship",tr:"mem",fit:2,feas:3,nov:4,risk:4,eff:"1–2 months",needs:["Narrative labels"],v:"long",
+  pitch:"Label scenes as falling in love, together, breakup or aftermath, and test decoding of this slow narrative variable beyond who is on screen.",
+  why:"Tests whether the MTL carries story-level state, a step toward narrative-level text decoding.",
+  risk:"Context-invariant concept cells argue against it. It's easily confounded with locations, and there are few independent samples at this timescale.",
+  first:"Annotate states, then decode with scene-level cross-validation and location and character controls.",refs:["context25","bausch26","grall"]},
+ {n:28,title:"Anticipation before cuts",tr:"mem",fit:1,feas:4,nov:3,risk:3,eff:"4–6 weeks",needs:[],v:"solid",
+  pitch:"Look for population changes before camera or scene cuts, and test whether they scale with how predictable the cut was, using a video model's surprise.",
+  why:"Predictive coding in the hippocampus is well established, and cut labels are precise to the frame.",
+  risk:"Visual motion before cuts confounds it; you need a video-feature control, which requires the DVD for the strong version.",
+  first:"Align population activity to cuts from −2 to 0 s and compare with matched non-cut times.",refs:["baldassano","zheng22"]},
+ {n:29,title:"Replay during pauses",tr:"mem",fit:1,feas:1,nov:4,risk:5,eff:"—",needs:["Unreleased data"],v:"skip",
+  pitch:"Look for time-compressed reactivation of recently watched scenes while the film was paused.",
+  why:"Replay after experience is a major memory topic.",
+  risk:"About 3 pauses per patient (median 19 s) of clinical interruptions, and the released framework drops spikes during pauses. Not viable without data outside the viewing session.",
+  first:"Ask the authors whether post-viewing rest or sleep was recorded.",refs:["mormann26","tacikowski24"]},
+ {n:30,title:"Day cards as quasi-repeated trials",tr:"methods",fit:2,feas:5,nov:3,risk:2,eff:"1–2 weeks",needs:[],v:"solid",
+  pitch:"The recurring 'Days of Summer' title cards (2.1% of frames) look alike visually. Use them as the film's closest thing to repeated trials, to estimate response reliability and a rough noise ceiling.",
+  why:"Single viewing otherwise gives no reliability estimate, which every encoding idea needs.",
+  risk:"Cards vary by season and are tied to story jumps; the sample is small.",
+  first:"Extract card onsets from the labels and compute split-half response reliability per unit.",refs:["summer","grall"]},
+ {n:31,title:"Ripple or theta analyses",tr:"mem",fit:1,feas:1,nov:3,risk:5,eff:"—",needs:["LFP (not released)"],v:"skip",
+  pitch:"Reproduce movie-evoked ripples at event boundaries, or theta phase precession during naturalistic encoding.",
+  why:"These are strong recent results on movie watching and memory.",
+  risk:"Impossible with SUMMER as released: it contains spike times only, no field potentials. The Keles 2024 dataset has them.",
+  first:"Use the Keles dataset instead, or ask the authors about raw data.",refs:["ripples25","keles24"]}
+];
+const REC=[2,1,9,10,4,6,13,14,19,17,18,21,3,11,7,5,22,23,16,15,20,30,12,26,8,25,27,28,24,29,31];
+
+const $=s=>document.querySelector(s);
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const byId=Object.fromEntries(P.map(p=>[p.id,p]));
+const idea=Object.fromEntries(I.map(x=>[x.n,x]));
+const pill=v=>`<span class="pill ${VERDICTS[v][1]}">${VERDICTS[v][0]}</span>`;
+const meter=(k,val,risk)=>`<span class="mcell"><span class="mlab">${k}</span><span class="meter${risk?" risk":""}" role="img" aria-label="${k} ${val} of 5">${[1,2,3,4,5].map(i=>`<i class="${i<=val?"on":""}"></i>`).join("")}</span></span>`;
+
+// regions
+$("#bars").innerHTML=REGIONS.map(([n,a,s])=>`<div class="bar"><span class="name">${n}</span><span class="track"><span class="all" style="width:${a/559*100}%"></span><span class="su" style="width:${s/559*100}%"></span></span><span class="v">${a.toLocaleString()} · ${s} SU</span></div>`).join("");
+
+
+// legend + matrix
+$("#vlegend").innerHTML=Object.keys(VERDICTS).map(v=>pill(v)).join(" ");
+const mx=$("#mx");let cells="";
+for(let fit=5;fit>=1;fit--){
+  cells+=`<div class="ylab">${fit}</div>`;
+  for(let feas=1;feas<=5;feas++){
+    const ids=REC.filter(n=>idea[n].fit===fit&&idea[n].feas===feas);
+    cells+=`<div class="cell${fit>=4&&feas>=4?" hot":""}${feas===5?" edge-r":""}${fit===1?" edge-b":""}">${ids.map(n=>`<button type="button" class="chip ${VERDICTS[idea[n].v][1]}" data-open="${n}" title="#${n} ${esc(idea[n].title)}" aria-label="Idea ${n}: ${esc(idea[n].title)}">${n}</button>`).join("")}</div>`;
+  }
+}
+cells+=`<div></div>`+[1,2,3,4,5].map(f=>`<div class="xlab">${f}</div>`).join("");
+mx.innerHTML=cells;
+
+// idea list
+let track="all";
+const seg=$("#trackseg");
+seg.innerHTML=[["all","All"],...Object.entries(TRACKS)].map(([k,l])=>`<button type="button" data-track="${k}" aria-pressed="${k==="all"}">${l}</button>`).join("");
+const usedIn={};I.forEach(x=>x.refs.forEach(r=>(usedIn[r]=usedIn[r]||[]).push(x.n)));
+
+function render(){
+  const sort=$("#sortsel").value, nod=$("#noextra").checked, hs=$("#hideskip").checked;
+  let list=REC.map(n=>idea[n]);
+  if(sort!=="rec"){const k=sort;list=[...list].sort((a,b)=>k==="risk"?a.risk-b.risk||REC.indexOf(a.n)-REC.indexOf(b.n):b[k]-a[k]||REC.indexOf(a.n)-REC.indexOf(b.n))}
+  list=list.filter(x=>(track==="all"||x.tr===track)&&(!nod||x.needs.every(t=>t.startsWith("DVD")))&&(!hs||x.v!=="skip"));
+  $("#count").textContent=`${list.length} of ${I.length} shown`;
+  $("#ilist").innerHTML=list.map(x=>`<details class="idea" id="idea-${x.n}">
+    <summary><span class="inum">#${x.n}</span><span class="tt"><span class="t">${esc(x.title)}</span><span class="track">${TRACKS[x.tr]}</span></span>
+    <span class="mrow">${meter("Fit",x.fit)}${meter("Feasible",x.feas)}${meter("Novel",x.nov)}${meter("Null risk",x.risk,true)}<span class="mcell effort"><span class="mlab">Effort</span>${x.eff}</span></span>
+    <span class="vv">${pill(x.v)}</span></summary>
+    <div class="body">
+      <div class="full"><h4>The project</h4><p>${esc(x.pitch)}</p></div>
+      <div><h4>Why MTL spikes could carry it</h4><p>${esc(x.why)}</p></div>
+      <div><h4>Main risk</h4><p>${esc(x.risk)}</p></div>
+      <div><h4>First two weeks</h4><p>${esc(x.first)}</p></div>
+      <div><h4>Needs beyond the NWB files</h4><div class="tags">${x.needs.length?x.needs.map(t=>`<span class="tag">${esc(t)}</span>`).join(""):'<span class="tag">Nothing, runs on the released data</span>'}</div>
+        <h4 style="margin-top:14px">Key papers</h4><div class="refs">${x.refs.map(r=>`<a href="#p-${r}">${esc(byId[r].v.split("·").pop().trim())} · ${esc(byId[r].t.split(/[:(]/)[0].slice(0,34).trim())}…</a>`).join(" ")}</div></div>
+    </div></details>`).join("");
+}
+seg.addEventListener("click",e=>{const b=e.target.closest("button");if(!b)return;track=b.dataset.track;seg.querySelectorAll("button").forEach(x=>x.setAttribute("aria-pressed",x===b));render()});
+["#sortsel","#noextra","#hideskip"].forEach(s=>$(s).addEventListener("change",render));
+render();
+
+document.addEventListener("click",e=>{const t=e.target.closest("[data-open]");if(!t)return;e.preventDefault();const n=+t.dataset.open;
+  let el=document.getElementById("idea-"+n);
+  if(!el){track="all";seg.querySelectorAll("button").forEach(x=>x.setAttribute("aria-pressed",x.dataset.track==="all"));$("#noextra").checked=false;$("#hideskip").checked=false;render();el=document.getElementById("idea-"+n)}
+  el.open=true;el.scrollIntoView({block:"start"});el.querySelector("summary").focus({preventScroll:true});
+});
+
+// papers
+$("#plist").innerHTML=Object.entries(PGROUPS).map(([g,label])=>`<div class="pgroup"><h3>${label}</h3><div class="plist">${P.filter(p=>p.g===g).map(p=>`<article class="paper" id="p-${p.id}">
+  <a class="ptitle" href="${p.u}" target="_blank" rel="noopener">${esc(p.t)}</a>
+  <span class="venue">${esc(p.v)}</span>
+  <p>${esc(p.d)}</p><p class="why">${esc(p.w)}</p>
+  ${usedIn[p.id]?`<span class="used">Used in${usedIn[p.id].map(n=>`<a href="#idea-${n}" data-open="${n}">#${n}</a>`).join("")}</span>`:""}
+</article>`).join("")}</div></div>`).join("");
+</script>
