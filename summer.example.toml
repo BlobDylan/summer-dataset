@@ -1,0 +1,20 @@
+# Copy to summer.toml only if your files are not where the defaults below expect them.
+# Every path is relative to data_dir (which is relative to the repo root, or absolute).
+
+data_dir = "data"
+
+[movie]
+# Any copy of (500) Days of Summer works if `summer setup` verifies it; see docs/DATA.md.
+video = "movie/movie-eng.mp4"
+
+[movie.audio]
+# language = "file" (pick the stream by its language tag) or "file#stream" (explicit stream index,
+# see `summer probe <file>`). The file must contain the same video as [movie].video.
+# German is required (the patients heard the German dub); English is optional.
+de = "movie/movie-eng.mp4"
+en = "movie/movie-eng.mp4"
+
+[movie.subtitles]
+# Optional .srt files, timed to the movie file above.
+de = "movie/movie-subs-de"
+en = "movie/movie-subs-eng"

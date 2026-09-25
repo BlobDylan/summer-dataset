@@ -1,0 +1,30 @@
+{
+  "a9dca98efaca6d18": {
+    "description": "Drive copy: movie-eng.mp4, 1728x720 24 fps re-time of the 23.976 fps film, German + English AAC",
+    "video": {
+      "codec": "h264",
+      "width": 1728,
+      "height": 720,
+      "avg_rate": "24",
+      "frames": 136908
+    },
+    "audio": [
+      "deu",
+      "eng"
+    ],
+    "mapping": {
+      "film_fps": 23.976023976023978,
+      "head": 25,
+      "brk": 97210,
+      "gap": 11020,
+      "t0": -0.0004166666664536933
+    },
+    "verification": {
+      "cuts_exact": {
+        "A": 0.877,
+        "B": 0.939
+      },
+      "speech_offset_shift_s": 0.073
+    }
+  }
+}

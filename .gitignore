@@ -1,7 +1,9 @@
 data/*
 !data/.gitkeep
-overview.html
+summer.toml
 
 __pycache__/
 *.pyc
 .venv/
+.pytest_cache/
+.DS_Store
