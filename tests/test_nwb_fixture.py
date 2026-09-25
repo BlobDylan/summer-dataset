@@ -16,6 +16,7 @@ def fake_nwb(tmp_path, monkeypatch):
         on[[28, 43]] = 1
         run = np.zeros(paradigm.N_FRAMES, np.int64)
         run[100:200] = 1
+        run[200:250] = 99                      # like indoor-setting: 99 = undefined, not "on"
         g["label_name"] = np.array([b"camera-cuts", b"tom"], dtype=object)
         g["indicator_function"] = np.r_[on, run]
         g["indicator_function_index"] = np.array([paradigm.N_FRAMES, 2 * paradigm.N_FRAMES], np.uint32)

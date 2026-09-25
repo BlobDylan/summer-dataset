@@ -137,7 +137,7 @@ def contact_sheets(source: Path, mp: FilmMapping, frame_pts) -> str:
     labels = sorted(ind)
 
     def active(p):
-        return ", ".join(n for n in labels if ind[n][p] and n not in ("indoor-setting", "persons"))
+        return ", ".join(n for n in labels if ind[n][p] == 1 and n not in ("indoor-setting", "persons"))
 
     def grab(ps, width=320):
         idx = movie.nearest_frame(frame_pts, mp.time(np.array(ps)))

@@ -66,6 +66,8 @@ seek · ctrl/pinch-scroll on the timeline to zoom.
 
 ## Docs
 
+- [AGENTS.md](AGENTS.md): **start here for experiments** (also what AI agents read): the aligned frames, audio,
+  labels, spikes, bins, splits and pitfalls, with tested code
 - [docs/DATA.md](docs/DATA.md): inputs, where they go, other movie copies, outputs
 - [docs/ALIGNMENT.md](docs/ALIGNMENT.md): conventions, the mapping, how it is measured and verified, known limits
 - [docs/TRACKS.md](docs/TRACKS.md): adding your own data (e.g. VLM captions) to the viewer

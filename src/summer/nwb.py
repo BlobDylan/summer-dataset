@@ -24,7 +24,8 @@ def _ragged(group, name):
 def indicator_functions() -> dict[str, np.ndarray]:
     """label -> uint8 array of length N_FRAMES, indexed by paradigm frame.
 
-    Identical in every patient's file, so read from the first one.
+    Values are 0/1, except `indoor-setting`: 0 = outdoor, 1 = indoor, 99 = undefined
+    (title cards, logos). Identical in every patient's file, so read from the first one.
     """
     with h5py.File(nwb_path(patients()[0]), "r") as f:
         g = f["processing/machine_learning/movie_annotations_indicator_functions"]
@@ -37,13 +38,13 @@ def indicator_functions() -> dict[str, np.ndarray]:
 
 def onsets(label: str) -> np.ndarray:
     """Paradigm frames where a label switches on (for cuts: the first frame of the new shot)."""
-    x = indicator_functions()[label].astype(np.int8)
+    x = (indicator_functions()[label] == 1).astype(np.int8)
     return np.flatnonzero(np.diff(np.r_[0, x]) == 1)
 
 
 def intervals(label: str) -> np.ndarray:
-    """(n, 2) array of [first, last+1) paradigm frames where the label is on."""
-    x = indicator_functions()[label].astype(np.int8)
+    """(n, 2) array of [first, last+1) paradigm frames where the label is on (== 1)."""
+    x = (indicator_functions()[label] == 1).astype(np.int8)
     d = np.diff(np.r_[0, x, 0])
     return np.stack([np.flatnonzero(d == 1), np.flatnonzero(d == -1)], axis=1)
 
